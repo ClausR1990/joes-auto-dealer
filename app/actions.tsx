@@ -1,15 +1,17 @@
 "use server";
 
+import CarProduct from "@/components/dream-car-showcase";
 import PickBrand from "@/components/pick-brand";
 import PickBudget from "@/components/pick-budget";
 import PickColor from "@/components/pick-color";
 import { PickFuelType } from "@/components/pick-fuel-type";
 import { PickVehicleType } from "@/components/pick-vehicle-type";
 import { openai } from "@ai-sdk/openai";
-import { generateId, generateObject } from "ai";
+import { generateId } from "ai";
 import { getMutableAIState, streamUI } from "ai/rsc";
 import { Loader2 } from "lucide-react";
 import OpenAI from "openai";
+import { getPlaiceholder } from "plaiceholder";
 import { ReactNode } from "react";
 import { z } from "zod";
 
@@ -49,7 +51,21 @@ const generateCarImage = async ({
   });
   const fileUrl = car.data[0].url;
 
-  return fileUrl;
+  if (!fileUrl)
+    return {
+      base64: "",
+      url: "",
+    };
+
+  const buffer = await fetch(fileUrl).then(async (res) =>
+    Buffer.from(await res.arrayBuffer())
+  );
+  const { base64 } = await getPlaiceholder(buffer);
+
+  return {
+    base64,
+    url: fileUrl,
+  };
 };
 
 export const sendMessage = async (input: string): Promise<ClientMessage> => {
@@ -76,7 +92,7 @@ export const sendMessage = async (input: string): Promise<ClientMessage> => {
         - Get the color preference from the user.
         - Get the fuel type from the user.
         - Get the brand preference from the user.
-        - Display the results to the user by calling getDreamCarResults.
+        - Choose a dream car for the user by calling getDreamCarResults.
     `,
     messages: history.get(),
     toolChoice: "required",
@@ -168,19 +184,23 @@ export const sendMessage = async (input: string): Promise<ClientMessage> => {
         },
       },
       getDreamCarResults: {
-        description: "Get dream car results",
+        description: "Pick a dream car for the user based on user preferences",
         parameters: z.object({
-          vehicleType: z
+          brandName: z.string().describe("brand name of the car"),
+          modelName: z.string().describe("model name of the car"),
+          price: z
             .string()
-            .describe("type of the vehicle the user wants"),
-          budget: z.string().describe("budget of the user"),
-          color: z.string().describe("color the user wants"),
-          fuelType: z
+            .describe(
+              "A realistic price of the car based on the user's budget"
+            ),
+          modelYear: z.string().describe("model year of the car"),
+          color: z.string().describe("color of the car"),
+          fuelType: z.string().describe("fuel type of the car"),
+          salesPitch: z
             .string()
-            .describe("fuel type of the vehicle the user wants"),
-          brand: z
-            .array(z.string())
-            .describe("brand preferences for the vehicle the user wants"),
+            .describe(
+              "A funny sales pitch for the car. The car is really damaged, so the sales pitch should be about how the damage is a good thing."
+            ),
         }),
         generate: async function* (props) {
           history.done((messages: ServerMessage[]) => [
@@ -193,42 +213,19 @@ export const sendMessage = async (input: string): Promise<ClientMessage> => {
             },
           ]);
           console.log("props", props);
-          const { object } = await generateObject({
-            model: openai("gpt-4o"),
-            prompt: `Pick the perfect dream car for the user based on their preferences. 
-            DO NOT output lists or tables. DO NOT ask for any details. 
-            DO NOT ask for any preferences. ${JSON.stringify(props)}`,
-            schema: z.object({
-              brandName: z.string().describe("brand name of the car"),
-              modelName: z.string().describe("model name of the car"),
-              price: z
-                .string()
-                .describe(
-                  "A realistic price of the car based on the user's budget"
-                ),
-              modelYear: z.string().describe("model year of the car"),
-              color: z.string().describe("color of the car"),
-              fuelType: z.string().describe("fuel type of the car"),
-              salesPitch: z.string().describe("a sales pitch for the car"),
-            }),
-          });
           const image = await generateCarImage({
-            carColor: object.color,
-            carMake: object.brandName,
-            carType: object.modelName,
+            carColor: props.color,
+            carMake: props.brandName,
+            carType: props.modelName,
           });
           yield <Loader2 className="animate-spin" />;
           return (
-            <pre className="whitespace-pre-wrap">
-              {JSON.stringify(
-                {
-                  ...object,
-                  image,
-                },
-                null,
-                2
-              )}
-            </pre>
+            <CarProduct
+              {...{
+                ...props,
+                image,
+              }}
+            />
           );
         },
       },

@@ -20,6 +20,7 @@ const budgetRanges = [
 
 export default function PickBudget() {
   const [budget, setBudget] = React.useState(50000);
+  const [hasSelected, setHasSelected] = React.useState(false);
   const [selectedRange, setSelectedRange] = React.useState(budgetRanges[1]);
   const { sendMessage } = useActions<typeof AI>();
   const { handler } = useConversation<ClientMessage>({
@@ -46,6 +47,7 @@ export default function PickBudget() {
 
   const handleClick = () => {
     handler(`My budget is: ${formatBudget(budget)}`);
+    setHasSelected(true);
   };
 
   return (
@@ -95,6 +97,7 @@ export default function PickBudget() {
               value={[budget]}
               onValueChange={handleSliderChange}
               className="mb-6"
+              disabled={hasSelected}
             />
           </div>
 
@@ -108,6 +111,7 @@ export default function PickBudget() {
                   setBudget(range.min);
                   setSelectedRange(range);
                 }}
+                disabled={hasSelected}
               >
                 <AnimatePresence>
                   {selectedRange === range && (
@@ -127,7 +131,12 @@ export default function PickBudget() {
 
           <div className="flex justify-center">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button className="w-full" size="lg" onClick={handleClick}>
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={handleClick}
+                disabled={hasSelected}
+              >
                 Next
                 <ArrowRight />
               </Button>

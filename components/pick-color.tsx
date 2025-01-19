@@ -88,6 +88,7 @@ const colors = [
 
 export default function PickColor() {
   const [selectedColor, setSelectedColor] = React.useState(colors[0].value);
+  const [hasSelected, setHasSelected] = React.useState(false);
   const selectedColorData = colors.find((c) => c.value === selectedColor);
   const { sendMessage } = useActions<typeof AI>();
   const { handler } = useConversation<ClientMessage>({
@@ -96,6 +97,7 @@ export default function PickColor() {
 
   const handleClick = () => {
     handler(`I want a ${selectedColorData?.name} colored car`);
+    setHasSelected(true);
   };
 
   return (
@@ -122,6 +124,7 @@ export default function PickColor() {
           defaultValue={selectedColor}
           onValueChange={setSelectedColor}
           className="grid grid-cols-2 gap-4 sm:grid-cols-3"
+          disabled={hasSelected}
         >
           {colors.map((color) => (
             <div key={color.value}>
@@ -161,7 +164,12 @@ export default function PickColor() {
         </RadioGroup>
         <div className="flex justify-center">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button className="w-full" size="lg" onClick={handleClick}>
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={handleClick}
+              disabled={hasSelected}
+            >
               Next
               <ArrowRight />
             </Button>

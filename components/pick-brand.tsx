@@ -48,6 +48,7 @@ const carBrands = [
 export default function PickBrand() {
   const [selectedBrands, setSelectedBrands] = React.useState<string[]>([]);
   const [noPreference, setNoPreference] = React.useState(false);
+  const [hasSelected, setHasSelected] = React.useState(false);
   const { sendMessage } = useActions<typeof AI>();
   const { handler } = useConversation<ClientMessage>({
     serverAction: sendMessage,
@@ -84,6 +85,7 @@ export default function PickBrand() {
       );
       handler(`I want a car from: ${brands.join(", ")}`);
     }
+    setHasSelected(true);
   };
 
   const groupedBrands = carBrands.reduce((acc, brand) => {
@@ -114,6 +116,7 @@ export default function PickBrand() {
               variant={noPreference ? "default" : "outline"}
               className="w-full relative"
               onClick={handleNoPreference}
+              disabled={hasSelected}
             >
               <AnimatePresence>
                 {noPreference && (
@@ -153,7 +156,7 @@ export default function PickBrand() {
                             }
                             className="w-full relative"
                             onClick={() => handleBrandToggle(brand.id)}
-                            disabled={noPreference}
+                            disabled={noPreference || hasSelected}
                           >
                             <AnimatePresence>
                               {selectedBrands.includes(brand.id) && (
@@ -183,7 +186,9 @@ export default function PickBrand() {
             <Button
               className="w-full"
               size="lg"
-              disabled={!noPreference && selectedBrands.length === 0}
+              disabled={
+                (!noPreference && selectedBrands.length === 0) || hasSelected
+              }
               onClick={handleClick}
             >
               <Car className="mr-2 h-4 w-4" />
