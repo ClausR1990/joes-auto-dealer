@@ -1,8 +1,10 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import * as React from "react";
 
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
 import {
   Card,
   CardContent,
@@ -12,7 +14,11 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useConversation } from "@/hooks/use-conversation";
 import { cn } from "@/lib/utils";
+import { useActions } from "ai/rsc";
+import { motion } from "framer-motion";
+import { Button } from "./ui/button";
 
 const colors = [
   {
@@ -57,11 +63,40 @@ const colors = [
     metallic:
       "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
   },
+  {
+    name: "Royal Purple",
+    value: "purple",
+    class: "bg-gradient-to-r from-purple-700 to-purple-600",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
+  },
+  {
+    name: "Crimson Pink",
+    value: "pink",
+    class: "bg-gradient-to-r from-pink-600 to-pink-500",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
+  },
+  {
+    name: "Burnt Orange",
+    value: "orange",
+    class: "bg-gradient-to-r from-orange-600 to-orange-500",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
+  },
 ];
 
 export default function PickColor() {
   const [selectedColor, setSelectedColor] = React.useState(colors[0].value);
   const selectedColorData = colors.find((c) => c.value === selectedColor);
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
+
+  const handleClick = () => {
+    handler(`I want a ${selectedColorData?.name} colored car`);
+  };
 
   return (
     <Card className="w-full max-w-lg">
@@ -124,6 +159,14 @@ export default function PickColor() {
             </div>
           ))}
         </RadioGroup>
+        <div className="flex justify-center">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button className="w-full" size="lg" onClick={handleClick}>
+              Next
+              <ArrowRight />
+            </Button>
+          </motion.div>
+        </div>
       </CardContent>
     </Card>
   );

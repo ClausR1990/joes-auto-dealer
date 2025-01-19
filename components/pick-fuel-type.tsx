@@ -1,6 +1,10 @@
 "use client";
 
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
 import { Button } from "@/components/ui/button";
+import { useConversation } from "@/hooks/use-conversation";
+import { useActions } from "ai/rsc";
 import { Battery, Droplet, Gauge, Zap } from "lucide-react";
 import { useState } from "react";
 
@@ -13,10 +17,15 @@ const fuelTypes = [
 
 export const PickFuelType = () => {
   const [hasPicked, setHasPicked] = useState(false);
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
 
   const handleClick = (type: string) => {
     console.log(`Picked ${type}`);
     setHasPicked(true);
+    handler(`I want a car that runs on fuel type: ${type}`);
   };
 
   return (

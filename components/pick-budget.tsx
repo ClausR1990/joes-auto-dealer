@@ -1,8 +1,12 @@
 "use client";
 
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { useConversation } from "@/hooks/use-conversation";
+import { useActions } from "ai/rsc";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import * as React from "react";
@@ -17,6 +21,10 @@ const budgetRanges = [
 export default function PickBudget() {
   const [budget, setBudget] = React.useState(50000);
   const [selectedRange, setSelectedRange] = React.useState(budgetRanges[1]);
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
 
   const handleSliderChange = (value: number[]) => {
     setBudget(value[0]);
@@ -34,6 +42,10 @@ export default function PickBudget() {
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(value);
+  };
+
+  const handleClick = () => {
+    handler(`My budget is: ${formatBudget(budget)}`);
   };
 
   return (
@@ -115,7 +127,7 @@ export default function PickBudget() {
 
           <div className="flex justify-center">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button className="w-full" size="lg">
+              <Button className="w-full" size="lg" onClick={handleClick}>
                 Next
                 <ArrowRight />
               </Button>

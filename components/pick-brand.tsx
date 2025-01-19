@@ -1,9 +1,13 @@
 "use client";
 
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useConversation } from "@/hooks/use-conversation";
+import { useActions } from "ai/rsc";
 import { AnimatePresence, motion } from "framer-motion";
 import { Car, Check, CircleDashed } from "lucide-react";
 import * as React from "react";
@@ -21,11 +25,33 @@ const carBrands = [
   { id: "kia", name: "Kia", origin: "South Korea" },
   { id: "volvo", name: "Volvo", origin: "Sweden" },
   { id: "lexus", name: "Lexus", origin: "Japan" },
+  { id: "subaru", name: "Subaru", origin: "Japan" },
+  { id: "mazda", name: "Mazda", origin: "Japan" },
+  { id: "nissan", name: "Nissan", origin: "Japan" },
+  { id: "porsche", name: "Porsche", origin: "Germany" },
+  { id: "tesla", name: "Tesla", origin: "USA" },
+  { id: "jeep", name: "Jeep", origin: "USA" },
+  { id: "landrover", name: "Land Rover", origin: "UK" },
+  { id: "jaguar", name: "Jaguar", origin: "UK" },
+  { id: "fiat", name: "Fiat", origin: "Italy" },
+  { id: "alfa", name: "Alfa Romeo", origin: "Italy" },
+  { id: "ferrari", name: "Ferrari", origin: "Italy" },
+  { id: "lamborghini", name: "Lamborghini", origin: "Italy" },
+  { id: "mclaren", name: "McLaren", origin: "UK" },
+  { id: "peugeot", name: "Peugeot", origin: "France" },
+  { id: "citroen", name: "Citroën", origin: "France" },
+  { id: "renault", name: "Renault", origin: "France" },
+  { id: "skoda", name: "Škoda", origin: "Czech Republic" },
+  { id: "seat", name: "SEAT", origin: "Spain" },
 ];
 
 export default function PickBrand() {
   const [selectedBrands, setSelectedBrands] = React.useState<string[]>([]);
   const [noPreference, setNoPreference] = React.useState(false);
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
 
   const handleBrandToggle = (brandId: string) => {
     if (noPreference) {
@@ -46,6 +72,17 @@ export default function PickBrand() {
     } else {
       setNoPreference(true);
       setSelectedBrands([]);
+    }
+  };
+
+  const handleClick = () => {
+    if (noPreference) {
+      handler("I want a car from any brand");
+    } else {
+      const brands = selectedBrands.map(
+        (id) => carBrands.find((brand) => brand.id === id)?.name
+      );
+      handler(`I want a car from: ${brands.join(", ")}`);
     }
   };
 
@@ -147,6 +184,7 @@ export default function PickBrand() {
               className="w-full"
               size="lg"
               disabled={!noPreference && selectedBrands.length === 0}
+              onClick={handleClick}
             >
               <Car className="mr-2 h-4 w-4" />
               {noPreference

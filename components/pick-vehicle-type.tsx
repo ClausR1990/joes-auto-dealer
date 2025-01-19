@@ -1,5 +1,9 @@
 "use client";
 
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
+import { useConversation } from "@/hooks/use-conversation";
+import { useActions } from "ai/rsc";
 import { useState } from "react";
 import {
   Convertible,
@@ -22,10 +26,15 @@ const carTypes = [
 
 export const PickVehicleType = () => {
   const [hasPicked, setHasPicked] = useState(false);
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
 
   const handleClick = (type: string) => {
     console.log(`Picked ${type}`);
     setHasPicked(true);
+    handler(`I want a vehicle type of: ${type}`);
   };
 
   return (

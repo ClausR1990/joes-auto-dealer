@@ -1,13 +1,28 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
+import { ClientMessage } from "@/app/actions";
+import { AI } from "@/app/ai";
+import { Button } from "@/components/ui/button";
+import { useConversation } from "@/hooks/use-conversation";
 import { cn } from "@/lib/utils";
+import { useActions } from "ai/rsc";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AutoDealerHero() {
+  const router = useRouter();
+  const { sendMessage } = useActions<typeof AI>();
+  const { handler } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
+
+  const handleClick = () => {
+    handler("Find me my dream car.");
+    router.push("/#main");
+  };
+
   return (
     <section className="min-h-screen relative w-full flex items-center bg-gradient-to-b from-background to-muted overflow-x-hidden">
       <div className="container max-w-full">
@@ -56,13 +71,13 @@ export default function AutoDealerHero() {
               transition={{ delay: 0.5, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Link
-                className={cn(buttonVariants({}), "rounded-full text-lg gap-2")}
-                href="#main"
+              <Button
+                className={cn("rounded-full text-lg gap-2")}
+                onClick={handleClick}
               >
                 <Search className="w-5 h-5" />
                 Start Your Search
-              </Link>
+              </Button>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}

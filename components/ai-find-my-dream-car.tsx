@@ -1,44 +1,31 @@
 "use client";
 
+import { ClientMessage } from "@/app/actions";
 import { AI } from "@/app/ai";
-import { generateId } from "ai";
-import { useActions, useUIState } from "ai/rsc";
+import { useScrollAnchor } from "@/hooks/scroll-to-anchor";
+import { useConversation } from "@/hooks/use-conversation";
+import { useActions } from "ai/rsc";
 
-export default function Page() {
+export default function FindMyDreamCar() {
   const { sendMessage } = useActions<typeof AI>();
-  const [messages, setMessages] = useUIState<typeof AI>();
+  const { conversation } = useConversation<ClientMessage>({
+    serverAction: sendMessage,
+  });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const { visibilityRef } = useScrollAnchor();
 
-    const target = event.target as typeof event.target & {
-      message: { value: string };
-    };
-
-    setMessages([
-      ...messages,
-      { id: generateId(), role: "user", display: target.message.value },
-    ]);
-
-    const response = await sendMessage(target.message.value);
-
-    setMessages([
-      ...messages,
-      { id: generateId(), role: "assistant", display: response },
-    ]);
-  };
+  if (conversation.length === 0) return null;
 
   return (
-    <>
-      <ul>
-        {messages.map((message) => (
-          <li key={message.id}>{message.display}</li>
-        ))}
-      </ul>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="message" />
-        <button type="submit">Send</button>
-      </form>
-    </>
+    <section className="flex flex-col h-full py-14 space-y-4">
+      <div className="flex flex-col space-y-6">
+        {conversation.map((message) => {
+          // if (message.role === "user") return null;
+
+          return <div key={message.id}>{message.display}</div>;
+        })}
+        <div className="h-px w-full max-w-xl break-words" ref={visibilityRef} />
+      </div>
+    </section>
   );
 }
