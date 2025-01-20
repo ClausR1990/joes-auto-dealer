@@ -1,30 +1,10 @@
 "use server";
 
-import CarProduct from "@/components/dream-car-showcase";
-import PickBrand from "@/components/pick-brand";
-import PickBudget from "@/components/pick-budget";
-import PickColor from "@/components/pick-color";
-import { PickFuelType } from "@/components/pick-fuel-type";
-import { PickVehicleType } from "@/components/pick-vehicle-type";
 import { openai } from "@ai-sdk/openai";
-import { generateId } from "ai";
-import { getMutableAIState, streamUI } from "ai/rsc";
-import { Loader2 } from "lucide-react";
+import { generateObject } from "ai";
 import OpenAI from "openai";
 import { getPlaiceholder } from "plaiceholder";
-import { ReactNode } from "react";
 import { z } from "zod";
-
-export type ServerMessage = {
-  role: "user" | "assistant";
-  content: string;
-};
-
-export type ClientMessage = {
-  id: string;
-  role: "user" | "assistant";
-  display: ReactNode;
-};
 
 const openaiInstance = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -36,7 +16,7 @@ type CarImagePrompt = {
   carMake: string;
 };
 
-const generateCarImage = async ({
+export const generateCarImage = async ({
   carColor,
   carMake,
   carType,
@@ -68,175 +48,109 @@ const generateCarImage = async ({
   };
 };
 
-export const sendMessage = async (input: string): Promise<ClientMessage> => {
-  "use server";
+export const generateBudgetRanges = async () => {
+  try {
+    const { object } = await generateObject({
+      model: openai("gpt-4o"),
+      schema: z.object({
+        budgets: z
+          .array(
+            z.object({
+              label: z.enum(["Economy", "Mid-Range", "Luxury", "Premium"]),
+              min: z.number().min(20000).max(200000),
+              max: z.number().min(20000).max(200000),
+              color: z
+                .string()
+                .describe('tailwind color class (e.g. "bg-green-500")'),
+            })
+          )
+          .min(4)
+          .describe(
+            '4 budget ranges (e.g. "Economy", "Mid-Range", "Luxury", "Premium")'
+          ),
+      }),
+      prompt: `Create a list of 4 budget ranges with the label, min, max, and color.`,
+    });
 
-  const history = getMutableAIState();
+    return object;
+  } catch (error) {
+    console.error("Error generating budget ranges", error);
+    return [];
+  }
+};
 
-  history.update([...history.get(), { role: "user", content: input }]);
+export const generateCarBrands = async () => {
+  try {
+    const { object } = await generateObject({
+      model: openai("gpt-4o"),
+      schema: z.object({
+        carBrands: z
+          .array(
+            z.object({
+              id: z.string().describe('brand id (e.g. "bmw") in lowercase'),
+              name: z
+                .string()
+                .describe('brand name (e.g. "BMW") in title case'),
+              origin: z.string().describe('brand origin (e.g. "Germany")'),
+            })
+          )
+          .min(15)
+          .max(25)
+          .describe("15-25 car brands"),
+      }),
+      prompt: `Create a list of 15-25 car brands with their id, name, and origin.
+      The id should be in lowercase, the name should be in title case, and the origin should be the country of origin of the brand.
+      The list should include brands like BMW, Toyota, and Ford.`,
+    });
 
-  const response = await streamUI({
-    model: openai("gpt-4o"),
-    system: `\n
-    You are a car dealer assistant.
-      - You help the user find their dream car.
-      - keep resposes limited to a sentence or two.
-      - DO NOT output lists or tables.
-      - after every tool call, pretend you're showing the result to the user and keep your response limited to a phrase.
-      - today's date is ${new Date().toLocaleDateString()}.
-      - ask for any details you don't know.
-      - IMPORTATN DO NOT use the same tool twice.
-      - here's the optimal flow:
-        - Get the vehicle type from the user.
-        - Get the budget from the user.
-        - Get the color preference from the user.
-        - Get the fuel type from the user.
-        - Get the brand preference from the user.
-        - Choose a dream car for the user by calling getDreamCarResults.
-    `,
-    messages: history.get(),
-    toolChoice: "required",
-    text: ({ content, done }) => {
-      if (done) {
-        history.done((messages: ServerMessage[]) => [
-          ...messages,
-          { role: "assistant", content },
-        ]);
-      }
+    return object;
+  } catch (error) {
+    console.error("Error generating car brands", error);
+    return [];
+  }
+};
 
-      return <div>{content}</div>;
-    },
-    tools: {
-      pickVehicleType: {
-        description: "Pick a vehicle type",
-        parameters: z.object({}),
-        generate: async function* () {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing vehicle types options`,
-            },
-          ]);
-          yield <></>;
+type DreamCarPayload = {
+  vehicleType: string;
+  brandNames: string[];
+  budget: string;
+  color: string;
+  fuelType: string;
+};
 
-          return <PickVehicleType />;
-        },
-      },
-      pickBudget: {
-        description: "Pick a budget",
-        parameters: z.object({}),
-        generate: async function* () {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing budget options`,
-            },
-          ]);
-          yield <></>;
-          return <PickBudget />;
-        },
-      },
-      pickColor: {
-        description: "Pick a color of the car",
-        parameters: z.object({}),
-        generate: async function* () {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing color options`,
-            },
-          ]);
-          yield <></>;
-          return <PickColor />;
-        },
-      },
-      pickFuelType: {
-        description: "Pick a fuel type of the car",
-        parameters: z.object({}),
-        generate: async function* () {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing fuel type options`,
-            },
-          ]);
-          yield <Loader2 className="animate-spin" />;
-          return <PickFuelType />;
-        },
-      },
-      pickBrandPreference: {
-        description: "Pick a brand preference",
-        parameters: z.object({}),
-        generate: async function* () {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing brand options`,
-            },
-          ]);
-          yield <Loader2 className="animate-spin" />;
-          return <PickBrand />;
-        },
-      },
-      getDreamCarResults: {
-        description: "Pick a dream car for the user based on user preferences",
-        parameters: z.object({
-          brandName: z.string().describe("brand name of the car"),
-          modelName: z.string().describe("model name of the car"),
-          price: z
-            .string()
-            .describe(
-              "A realistic price of the car based on the user's budget"
-            ),
-          modelYear: z.string().describe("model year of the car"),
-          color: z.string().describe("color of the car"),
-          fuelType: z.string().describe("fuel type of the car"),
-          salesPitch: z
-            .string()
-            .describe(
-              "A funny sales pitch for the car. The car is really damaged, so the sales pitch should be about how the damage is a good thing."
-            ),
-        }),
-        generate: async function* (props) {
-          history.done((messages: ServerMessage[]) => [
-            ...messages,
-            {
-              role: "assistant",
-              content: `Showing dream car results based on preferences: ${JSON.stringify(
-                props
-              )}`,
-            },
-          ]);
-          console.log("props", props);
-          const image = await generateCarImage({
-            carColor: props.color,
-            carMake: props.brandName,
-            carType: props.modelName,
-          });
-          yield <Loader2 className="animate-spin" />;
-          return (
-            <CarProduct
-              {...{
-                ...props,
-                image,
-              }}
-            />
-          );
-        },
-      },
-    },
-  });
+export const generateDreamCar = async (props: DreamCarPayload) => {
+  try {
+    const { object } = await generateObject({
+      model: openai("gpt-4o"),
+      schema: z.object({
+        brandName: z.string().describe("brand name of the car"),
+        modelName: z.string().describe("model name of the car"),
+        price: z
+          .string()
+          .describe("A realistic price of the car based on the user's budget"),
+        modelYear: z.string().describe("model year of the car"),
+        color: z.string().describe("color of the car"),
+        fuelType: z.string().describe("fuel type of the car"),
+        salesPitch: z
+          .string()
+          .describe(
+            "A funny sales pitch for the car. The car is really damaged, so the sales pitch should be about how the damage is a good thing."
+          ),
+      }),
+      prompt: `Pick the dream car for the user based on their preferences. The user wants a car with the following preferences: ${JSON.stringify(
+        { props }
+      )}`,
+    });
 
-  console.log("😆", history.get());
+    const image = await generateCarImage({
+      carColor: object.color,
+      carMake: object.brandName,
+      carType: object.modelName,
+    });
 
-  return {
-    id: generateId(),
-    role: "assistant",
-    display: response.value,
-  };
+    return { ...props, ...object, image };
+  } catch (error) {
+    console.error("Error generating dream car", error);
+    return null;
+  }
 };

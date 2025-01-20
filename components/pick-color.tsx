@@ -3,8 +3,6 @@
 import { ArrowRight, Check } from "lucide-react";
 import * as React from "react";
 
-import { ClientMessage } from "@/app/actions";
-import { AI } from "@/app/ai";
 import {
   Card,
   CardContent,
@@ -14,13 +12,12 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useConversation } from "@/hooks/use-conversation";
 import { cn } from "@/lib/utils";
-import { useActions } from "ai/rsc";
+import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 
-const colors = [
+export const colors = [
   {
     name: "Cherry Red",
     value: "red",
@@ -90,18 +87,20 @@ export default function PickColor() {
   const [selectedColor, setSelectedColor] = React.useState(colors[0].value);
   const [hasSelected, setHasSelected] = React.useState(false);
   const selectedColorData = colors.find((c) => c.value === selectedColor);
-  const { sendMessage } = useActions<typeof AI>();
-  const { handler } = useConversation<ClientMessage>({
-    serverAction: sendMessage,
+  const { append } = useChat({
+    id: "auto-dealer",
   });
 
   const handleClick = () => {
-    handler(`I want a ${selectedColorData?.name} colored car`);
     setHasSelected(true);
+    append({
+      role: "user",
+      content: `I want a ${selectedColorData?.name} colored car`,
+    });
   };
 
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full max-w-lg skeleton-bg">
       <CardHeader>
         <CardTitle>Choose Your Car Color</CardTitle>
         <CardDescription>
@@ -155,7 +154,7 @@ export default function PickColor() {
                     />
                   )}
                 </div>
-                <span className="mt-2 text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <span className="mt-2 text-xs font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   {color.name}
                 </span>
               </Label>

@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { Calendar, ChevronRight, Fuel, Paintbrush } from "lucide-react";
 import Image from "next/image";
 
-type CarProductProps = {
+export type CarProductProps = {
   brandName?: string;
   modelName?: string;
   price?: string;
@@ -43,7 +43,7 @@ const CarProduct = ({
       transition={{ duration: 0.5 }}
       className="w-full max-w-4xl mx-auto"
     >
-      <Card className="bg-white rounded-lg overflow-hidden shadow-lg">
+      <Card className="bg-white rounded-lg overflow-hidden shadow-lg skeleton-bg">
         <CardHeader className="p-6 space-y-4">
           <div className="flex justify-between items-start">
             <div>
@@ -76,13 +76,13 @@ const CarProduct = ({
         </CardHeader>
 
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-wrap gap-8">
             {image && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
-                className="relative h-64 rounded-lg overflow-hidden"
+                className="relative h-64 rounded-lg overflow-hidden basis-full"
               >
                 <Image
                   src={image.url}
@@ -98,15 +98,24 @@ const CarProduct = ({
 
             <div className="space-y-6">
               <div className="flex flex-wrap gap-4">
-                <Badge variant="secondary" className="flex items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-2 skeleton-div"
+                >
                   <Calendar className="w-4 h-4" />
                   {modelYear}
                 </Badge>
-                <Badge variant="secondary" className="flex items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-2 skeleton-div"
+                >
                   <Paintbrush className="w-4 h-4" />
                   {color}
                 </Badge>
-                <Badge variant="secondary" className="flex items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-2 skeleton-div"
+                >
                   <Fuel className="w-4 h-4" />
                   {fuelType}
                 </Badge>
@@ -126,11 +135,14 @@ const CarProduct = ({
 
         <CardFooter className="p-6 bg-gray-50">
           <div className="w-full flex justify-between items-center">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 skeleton-div"
+            >
               Schedule Test Drive
               <ChevronRight className="w-4 h-4" />
             </Button>
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2 skeleton-div">
               Inquire Now
               <ChevronRight className="w-4 h-4" />
             </Button>
