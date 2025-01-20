@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Toaster } from "@/components/ui/sonner";
 import { useChat } from "ai/react";
 
 interface PaymentFormProps {
@@ -67,51 +66,48 @@ export function PaymentForm({ amount = 9.99, onSuccess }: PaymentFormProps) {
   };
 
   return (
-    <>
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Quick Checkout</CardTitle>
-          <CardDescription>
-            One-click payment with your saved card
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-primary/10">
-                <CreditCard className="w-5 h-5 text-primary" />
-              </div>
-              <div className="grid gap-0.5">
-                <span className="text-sm font-medium">Ending in 4242</span>
-                <span className="text-xs text-muted-foreground">
-                  Expires 12/24
-                </span>
-              </div>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Quick Checkout</CardTitle>
+        <CardDescription>
+          One-click payment with your saved card
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-primary/10">
+              <CreditCard className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-2xl font-bold">{formatCurrency(amount)}</span>
+            <div className="grid gap-0.5">
+              <span className="text-sm font-medium">Ending in 4242</span>
+              <span className="text-xs text-muted-foreground">
+                Expires 12/24
+              </span>
+            </div>
           </div>
-        </CardContent>
-        <CardFooter>
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handlePayment}
-            disabled={isLoading || paymentComplete}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : paymentComplete ? (
-              `Payment Complete`
-            ) : (
-              `Pay ${formatCurrency(amount)}`
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
-      <Toaster position="bottom-right" />
-    </>
+          <span className="text-2xl font-bold">{formatCurrency(amount)}</span>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button
+          className="w-full"
+          size="lg"
+          onClick={handlePayment}
+          disabled={isLoading || paymentComplete}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Processing...
+            </>
+          ) : paymentComplete ? (
+            `Payment Complete`
+          ) : (
+            `Pay ${formatCurrency(amount)}`
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

@@ -35,17 +35,19 @@ export const PickVehicleType = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
           {vehicleTypes?.map((carType) => (
             <Button
               key={carType.name}
               variant="outline"
-              className="flex items-center gap-2 h-auto flex-col [&_svg]:size-16 skeleton-div"
+              className="flex items-center gap-2 h-auto flex-col md:[&_svg]:size-16 [&_svg]:size-10 skeleton-div hyphens-auto"
               disabled={hasPicked}
               onClick={() => handleClick(carType.name)}
             >
               {carType.icon && <carType.icon />}
-              <span className="text-muted-foreground">{carType.name}</span>
+              <span className="text-muted-foreground block w-full text-center hyphens-auto break-words whitespace-normal">
+                {carType.name}
+              </span>
             </Button>
           ))}
         </div>
