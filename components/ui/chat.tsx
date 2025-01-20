@@ -3,6 +3,7 @@ import { Message as MessageComponent } from "@/components/message";
 import { Message, useChat } from "ai/react";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { FloatingReset } from "../floating-reset-button";
 
 export const Chat = () => {
   const { messages, isLoading } = useChat({
@@ -31,6 +32,7 @@ export const Chat = () => {
           <Loader2 className="animate-spin" />
         </div>
       )}
+      {messages?.length > 0 && <FloatingReset />}
     </div>
   );
 };
