@@ -19,7 +19,7 @@ export default function AutoDealerHero() {
       role: "user",
       content: "Find me my dream car.",
     });
-    router.push("/#main");
+    // router.push("/#main");
   };
 
   return (
@@ -51,7 +51,9 @@ export default function AutoDealerHero() {
               >
                 Find Your Dream Car at
                 <br />
-                <span className="text-primary">Joe&apos;s Auto Dealer</span>
+                <span className="text-primary tracking-normal font-black">
+                  Joe&apos;s Auto Dealer
+                </span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}

@@ -17,7 +17,7 @@ export const Message = ({
   toolInvocations: Array<ToolInvocation> | undefined;
   attachments?: Array<Attachment>;
 }) => {
-  if (role === "user") return null;
+  if (role === "user" || role === "system") return null;
 
   return (
     <motion.div

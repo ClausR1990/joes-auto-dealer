@@ -48,7 +48,7 @@ export function PaymentForm({ amount = 9.99, onSuccess }: PaymentFormProps) {
       setPaymentComplete(true);
 
       toast.success("Payment successful! Thank you for your purchase.", {
-        description: `$${amount.toFixed(2)} has been charged to your card.`,
+        description: `${formatCurrency(amount)} has been charged to your card.`,
       });
 
       append({
