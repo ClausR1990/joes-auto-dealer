@@ -6,10 +6,8 @@ import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export default function AutoDealerHero() {
-  const router = useRouter();
   const { append } = useChat({
     id: "auto-dealer",
   });
@@ -19,7 +17,6 @@ export default function AutoDealerHero() {
       role: "user",
       content: "Find me my dream car.",
     });
-    // router.push("/#main");
   };
 
   return (
