@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto_Slab as Roboto } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -26,6 +27,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );

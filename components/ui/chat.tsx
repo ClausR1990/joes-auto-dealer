@@ -10,7 +10,7 @@ export const Chat = () => {
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && messages.length > 0) {
       window.scrollTo(0, document.body.scrollHeight);
     }
   }, [messages]);

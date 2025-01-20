@@ -27,13 +27,13 @@ export type CarProductProps = {
 };
 
 const CarProduct = ({
-  brandName = "Toyota",
-  modelName = "Camry XSE Hybrid",
-  price = "$45,000",
-  modelYear = "2023",
-  color = "Sunburst Yellow",
-  fuelType = "Hybrid",
-  salesPitch = "Experience the perfect blend of luxury...",
+  brandName,
+  modelName,
+  price,
+  modelYear,
+  color,
+  fuelType,
+  salesPitch,
   image,
 }: CarProductProps) => {
   return (
@@ -77,24 +77,26 @@ const CarProduct = ({
 
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-8">
-            {image && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-                className="relative h-64 rounded-lg overflow-hidden basis-full"
-              >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+              className="relative h-64 rounded-lg overflow-hidden basis-full"
+            >
+              {image ? (
                 <Image
                   src={image.url}
                   alt={`${brandName} ${modelName}`}
-                  className="w-full h-full object-cover"
+                  className="size-full object-cover"
                   width={640}
                   height={360}
                   placeholder="blur"
                   blurDataURL={image.base64}
                 />
-              </motion.div>
-            )}
+              ) : (
+                <div className="skeleton-div size-full"></div>
+              )}
+            </motion.div>
 
             <div className="space-y-6">
               <div className="flex flex-wrap gap-4">

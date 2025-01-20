@@ -23,8 +23,8 @@ export const generateCarImage = async ({
 }: CarImagePrompt) => {
   const car = await openaiInstance.images.generate({
     model: "dall-e-3",
-    prompt: `A detailed and realistic image of a ${carColor} ${carMake} ${carColor} with significant visible damage from a full angled view.
-    The ${carType} has a cracked front bumper, dent. High quality and should be 1024x1024 pixels in size. HD,`,
+    prompt: `A detailed and realistic photo of a ${carColor} colored ${carMake} ${carType} with significant visible damage from a full angled view.
+    The ${carType} has a cracked front bumper, dent.,`,
     n: 1,
     quality: "standard",
     size: "1024x1024",
@@ -130,7 +130,6 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
           .describe("A realistic price of the car based on the user's budget"),
         modelYear: z.string().describe("model year of the car"),
         color: z.string().describe("color of the car"),
-        fuelType: z.string().describe("fuel type of the car"),
         salesPitch: z
           .string()
           .describe(
@@ -145,7 +144,7 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
     const image = await generateCarImage({
       carColor: object.color,
       carMake: object.brandName,
-      carType: object.modelName,
+      carType: `${object.modelYear} ${object.modelName} ${props.vehicleType}`,
     });
 
     return { ...props, ...object, image };

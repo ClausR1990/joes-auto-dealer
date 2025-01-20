@@ -4,7 +4,7 @@ import {
   generateDreamCar,
 } from "@/app/actions";
 import { openai } from "@ai-sdk/openai";
-import { streamText, tool } from "ai";
+import { convertToCoreMessages, streamText, tool } from "ai";
 import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
@@ -12,6 +12,10 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
+
+  const coreMessages = convertToCoreMessages(messages).filter(
+    (message) => message.content.length > 0
+  );
 
   const result = streamText({
     model: openai("gpt-4o"),
@@ -23,7 +27,10 @@ export async function POST(req: Request) {
       - after every tool call, pretend you're showing the result to the user and keep your response limited to a phrase.
       - today's date is ${new Date().toLocaleDateString()}.
       - ask for any details you don't know.
-      - IMPORTATN DO NOT use the same tool twice.
+      - The user doesn't have an input field unless you call showInputField.
+      - IMPORTANT use tools rather than asking for user input.
+      - IMPORTANT If you ask a question after calling getDreamCarResults, show the input field.
+      - When the user is ready to pay show the payment form.
       - here's the optimal flow:
         - Get the vehicle type from the user.
         - Get the budget from the user.
@@ -31,12 +38,15 @@ export async function POST(req: Request) {
         - Get the fuel type from the user.
         - Get the brand preference from the user.
         - Choose a dream car for the user by calling getDreamCarResults.
+        - call showInputField
+        - call paymentForm
     `,
-    messages,
-    toolChoice: "required",
+    messages: coreMessages,
+    toolChoice: "auto",
+    maxSteps: 4,
     tools: {
       pickVehicleType: tool({
-        description: "Pick a vehicle type",
+        description: "Get the vehicle type",
         parameters: z.object({}),
         execute: async () => {
           return {};
@@ -88,6 +98,25 @@ export async function POST(req: Request) {
           const data = await generateDreamCar(props);
 
           return data;
+        },
+      }),
+      showInputField: tool({
+        description: "Show the input field",
+        parameters: z.object({}),
+        execute: async () => {
+          return {};
+        },
+      }),
+      paymentForm: tool({
+        description: "Show the payment form",
+        parameters: z.object({
+          amount: z
+            .number()
+            .optional()
+            .describe("The amount to charge for the car"),
+        }),
+        execute: async ({ amount }) => {
+          return { amount };
         },
       }),
     },

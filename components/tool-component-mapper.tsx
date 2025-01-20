@@ -1,6 +1,8 @@
 import { ToolInvocation } from "ai";
 import { Loader2 } from "lucide-react";
+import { ChatInput } from "./chat-input";
 import CarProduct from "./dream-car-showcase";
+import { PaymentForm } from "./payment-form";
 import PickBrand from "./pick-brand";
 import PickBudget from "./pick-budget";
 import PickColor from "./pick-color";
@@ -27,6 +29,12 @@ export const ToolComponentMapper = (props: ToolInvocation) => {
     }
     if (toolName === "getDreamCarResults") {
       return <CarProduct {...result} />;
+    }
+    if (toolName === "showInputField") {
+      return <ChatInput />;
+    }
+    if (toolName === "paymentForm") {
+      return <PaymentForm {...result} />;
     }
 
     return <pre>{JSON.stringify(result, null, 2)}</pre>;
@@ -58,6 +66,12 @@ const LoadingUI = (props: ToolInvocation) => {
   }
   if (toolName === "getDreamCarResults") {
     return <CarProduct />;
+  }
+  if (toolName === "showInputField") {
+    return <ChatInput />;
+  }
+  if (toolName === "paymentForm") {
+    return <PaymentForm amount={0} />;
   }
 
   return <Loader2 className="animate-spin" />;
