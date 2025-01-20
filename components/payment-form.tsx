@@ -66,7 +66,7 @@ export function PaymentForm({ amount = 9.99, onSuccess }: PaymentFormProps) {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-lg">
       <CardHeader>
         <CardTitle>Quick Checkout</CardTitle>
         <CardDescription>

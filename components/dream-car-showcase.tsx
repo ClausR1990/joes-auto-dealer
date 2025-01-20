@@ -8,8 +8,15 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { useChat } from "ai/react";
 import { motion } from "framer-motion";
-import { Calendar, ChevronRight, Fuel, Paintbrush } from "lucide-react";
+import {
+  Calendar,
+  ChevronRight,
+  DollarSignIcon,
+  Fuel,
+  Paintbrush,
+} from "lucide-react";
 import Image from "next/image";
 
 export type CarProductProps = {
@@ -36,6 +43,24 @@ const CarProduct = ({
   salesPitch,
   image,
 }: CarProductProps) => {
+  const { append } = useChat({
+    id: "auto-dealer",
+  });
+
+  const handlePayNow = () => {
+    append({
+      role: "user",
+      content: "I want to pay for this car now.",
+    });
+  };
+
+  const handleScheduleTestDrive = () => {
+    append({
+      role: "user",
+      content: "I want to schedule a test drive.",
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -140,13 +165,17 @@ const CarProduct = ({
             <Button
               variant="outline"
               className="flex items-center gap-2 skeleton-div"
+              onClick={handleScheduleTestDrive}
             >
               Schedule Test Drive
               <ChevronRight className="w-4 h-4" />
             </Button>
-            <Button className="flex items-center gap-2 skeleton-div">
-              Inquire Now
-              <ChevronRight className="w-4 h-4" />
+            <Button
+              className="flex items-center gap-2 skeleton-div"
+              onClick={handlePayNow}
+            >
+              Pay Now
+              <DollarSignIcon className="w-4 h-4" />
             </Button>
           </div>
         </CardFooter>

@@ -153,3 +153,24 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
     return null;
   }
 };
+
+export const getTestDriveTimeSlots = async () => {
+  try {
+    const { object } = await generateObject({
+      model: openai("gpt-4o"),
+      schema: z.object({
+        timeSlots: z
+          .array(z.string())
+          .min(3)
+          .max(5)
+          .describe("3-5 time slots, eg. 10:00 AM"),
+      }),
+      prompt: `Create a list of 3-5 time slots for test drives.`,
+    });
+
+    return object;
+  } catch (error) {
+    console.error("Error generating test drive time slots", error);
+    return [];
+  }
+};

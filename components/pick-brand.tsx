@@ -81,7 +81,7 @@ export default function PickBrand({ carBrands }: PickBrandProps) {
   }, {} as Record<string, typeof carBrands>);
 
   return (
-    <Card className="w-full max-w-md mx-auto skeleton-bg">
+    <Card className="w-full max-w-lg mx-auto skeleton-bg">
       <CardHeader>
         <CardTitle>Choose Your Preferred Brands</CardTitle>
         <CardDescription>

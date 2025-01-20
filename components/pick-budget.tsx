@@ -80,7 +80,7 @@ export default function PickBudget({ budgets }: BudgetRangeProps) {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto skeleton-bg">
+    <Card className="w-full max-w-lg mx-auto skeleton-bg">
       <CardHeader>
         <CardTitle>Select Your Budget</CardTitle>
         <CardDescription>

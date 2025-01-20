@@ -8,6 +8,7 @@ import PickBudget from "./pick-budget";
 import PickColor from "./pick-color";
 import { PickFuelType } from "./pick-fuel-type";
 import { PickVehicleType } from "./pick-vehicle-type";
+import { TestDriveForm } from "./test-drive-form";
 
 export const ToolComponentMapper = (props: ToolInvocation) => {
   if (props.state === "result") {
@@ -35,6 +36,9 @@ export const ToolComponentMapper = (props: ToolInvocation) => {
     }
     if (toolName === "paymentForm") {
       return <PaymentForm {...result} />;
+    }
+    if (toolName === "scheduleATestDrive") {
+      return <TestDriveForm {...result} />;
     }
 
     return <pre>{JSON.stringify(result, null, 2)}</pre>;
@@ -72,6 +76,9 @@ const LoadingUI = (props: ToolInvocation) => {
   }
   if (toolName === "paymentForm") {
     return <PaymentForm amount={0} />;
+  }
+  if (toolName === "scheduleATestDrive") {
+    return <TestDriveForm />;
   }
 
   return <Loader2 className="animate-spin" />;

@@ -72,6 +72,7 @@ export default function AutoDealerHero() {
               <Button
                 className={cn("rounded-full text-lg gap-2")}
                 onClick={handleClick}
+                size="lg"
               >
                 <Search className="w-5 h-5" />
                 Start Your Search

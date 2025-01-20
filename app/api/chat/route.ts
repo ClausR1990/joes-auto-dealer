@@ -2,6 +2,7 @@ import {
   generateBudgetRanges,
   generateCarBrands,
   generateDreamCar,
+  getTestDriveTimeSlots,
 } from "@/app/actions";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, tool } from "ai";
@@ -105,6 +106,22 @@ export async function POST(req: Request) {
         parameters: z.object({}),
         execute: async () => {
           return {};
+        },
+      }),
+      scheduleATestDrive: tool({
+        description: "Schedule a test drive",
+        parameters: z.object({
+          vehicleName: z
+            .string()
+            .describe("The full name of the vehicle, eg. Tesla Model S"),
+          vehicleType: z.string().describe("The type of the vehicle"),
+        }),
+        execute: async (props) => {
+          const data = await getTestDriveTimeSlots();
+          return {
+            ...props,
+            ...data,
+          };
         },
       }),
       paymentForm: tool({
