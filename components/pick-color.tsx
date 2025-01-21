@@ -81,6 +81,41 @@ export const colors = [
     metallic:
       "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
   },
+  {
+    name: "Ice Silver",
+    value: "silver",
+    class: "bg-gradient-to-r from-gray-300 to-gray-200",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/30 before:via-transparent before:to-black/20 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.3),transparent_50%)]",
+  },
+  {
+    name: "Bronze Blaze",
+    value: "bronze",
+    class: "bg-gradient-to-r from-yellow-700 to-yellow-600",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/25 before:via-transparent before:to-black/30 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.25),transparent_50%)]",
+  },
+  {
+    name: "Copper Glow",
+    value: "copper",
+    class: "bg-gradient-to-r from-orange-700 to-orange-600",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/25 before:via-transparent before:to-black/30 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.25),transparent_50%)]",
+  },
+  {
+    name: "Pearl White",
+    value: "white",
+    class: "bg-gradient-to-r from-gray-100 to-gray-50",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/50 before:via-transparent before:to-black/10 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.4),transparent_50%)]",
+  },
+  {
+    name: "Electric Lime",
+    value: "lime",
+    class: "bg-gradient-to-r from-lime-600 to-lime-500",
+    metallic:
+      "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/40 after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_50%)]",
+  },
 ];
 
 export default function PickColor() {
@@ -108,11 +143,12 @@ export default function PickColor() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
-        <div className="flex items-center justify-center p-8 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg">
-          <div className="relative w-full max-w-[280px] aspect-[2/1] rounded-lg overflow-hidden shadow-xl">
+        <div className="flex items-center justify-center p-4 bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg">
+          <div className="relative w-full aspect-[2/1] sm:aspect-[3/1] max-w-full rounded-lg overflow-hidden shadow-xl">
             <div
               className={cn(
                 "absolute inset-0 transition-all duration-300",
+                "metallic-noise metallic-shine size-full",
                 selectedColorData?.class,
                 selectedColorData?.metallic
               )}
@@ -122,44 +158,46 @@ export default function PickColor() {
         <RadioGroup
           defaultValue={selectedColor}
           onValueChange={setSelectedColor}
-          className="grid grid-cols-2 gap-4 sm:grid-cols-3"
+          className="grid grid-cols-1 gap-2"
           disabled={hasSelected}
         >
-          {colors.map((color) => (
-            <div key={color.value}>
-              <RadioGroupItem
-                value={color.value}
-                id={color.value}
-                className="peer sr-only"
-                aria-label={color.name}
-              />
-              <Label
-                htmlFor={color.value}
-                className="flex flex-col items-center text-center h-full justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-              >
-                <div className="relative h-10 w-10 rounded-full border border-gray-200 overflow-hidden">
-                  <div
-                    className={cn(
-                      "absolute inset-0",
-                      color.class,
-                      color.metallic
-                    )}
-                  />
-                  {selectedColor === color.value && (
-                    <Check
+          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2">
+            {colors.map((color) => (
+              <div key={color.value}>
+                <RadioGroupItem
+                  value={color.value}
+                  id={color.value}
+                  className="peer sr-only"
+                  aria-label={color.name}
+                />
+                <Label
+                  htmlFor={color.value}
+                  className="flex items-center gap-3 rounded-lg border border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                >
+                  <div className="relative h-8 w-8 rounded-full border border-gray-200 overflow-hidden shrink-0">
+                    <div
                       className={cn(
-                        "absolute inset-0 m-auto h-4 w-4 z-10",
-                        color.value === "yellow" ? "text-black" : "text-white"
+                        "absolute inset-0",
+                        color.class,
+                        color.metallic
                       )}
                     />
-                  )}
-                </div>
-                <span className="mt-2 text-xs font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  {color.name}
-                </span>
-              </Label>
-            </div>
-          ))}
+                    {selectedColor === color.value && (
+                      <Check
+                        className={cn(
+                          "absolute inset-0 m-auto h-4 w-4 z-10",
+                          color.value === "yellow" ? "text-black" : "text-white"
+                        )}
+                      />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium truncate peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {color.name}
+                  </span>
+                </Label>
+              </div>
+            ))}
+          </div>
         </RadioGroup>
         <div className="flex justify-center">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

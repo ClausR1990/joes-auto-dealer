@@ -20,8 +20,11 @@ export default function AutoDealerHero() {
   };
 
   return (
-    <section className="min-h-screen relative w-full flex items-center bg-gradient-to-b from-background to-muted overflow-x-hidden">
-      <div className="container max-w-full z-10">
+    <section
+      role="presentation"
+      className="min-h-screen relative w-full flex items-center bg-gradient-to-b from-background to-muted overflow-x-hidden"
+    >
+      <div className="container max-w-[1920px] z-10">
         <div className="grid lg:grid-cols-2 gap-6 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -124,7 +127,6 @@ export default function AutoDealerHero() {
                 priority
               />
             </motion.div>
-            {/* Animated gradient orb effect */}
           </motion.div>
         </div>
       </div>

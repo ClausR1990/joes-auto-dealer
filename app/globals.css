@@ -94,3 +94,48 @@
     @apply bg-foreground/20 animate-pulse;
   }
 }
+
+.metallic-noise {
+  position: relative;
+  isolation: isolate;
+}
+
+.metallic-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  filter: contrast(150%) brightness(1000%);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+  mix-blend-mode: overlay;
+}
+
+.metallic-shine {
+  position: relative;
+}
+
+.metallic-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 55%,
+    transparent 60%
+  );
+  background-size: 200% 200%;
+  animation: shine 5s infinite linear;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     system: SYSTEM_PROMPT,
     messages: coreMessages,
     toolChoice: "auto",
-    maxSteps: 4,
+    maxSteps: 1,
     tools: {
       pickVehicleType: tool({
         description: "Get the vehicle type",
@@ -119,16 +119,10 @@ export async function POST(req: Request) {
             .number()
             .optional()
             .describe("The amount to charge for the car"),
+          product: z.string().describe("The product being purchased"),
         }),
         execute: async ({ amount }) => {
           return { amount };
-        },
-      }),
-      showOrderConfirmation: tool({
-        description: "Show the order confirmation after payment",
-        parameters: orderConfirmationSchema,
-        execute: async (props) => {
-          return props;
         },
       }),
       applyForFinancing: tool({
@@ -141,6 +135,14 @@ export async function POST(req: Request) {
       applyForInsurance: tool({
         description: "Show the insurance calculator to apply for insurance",
         parameters: insuranceCalculatorSchema,
+        execute: async (props) => {
+          return props;
+        },
+      }),
+      showOrderConfirmation: tool({
+        description:
+          "Show the order confirmation after all successful payment is complete",
+        parameters: orderConfirmationSchema,
         execute: async (props) => {
           return props;
         },

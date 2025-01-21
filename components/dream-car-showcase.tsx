@@ -1,5 +1,6 @@
 "use client";
 
+import { generateCarImage } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +9,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { useChatStore } from "@/store";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import {
@@ -19,33 +21,32 @@ import {
   Percent,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type CarProductProps = {
   brandName?: string;
   modelName?: string;
+  vehicleType?: string;
   price?: string;
   modelYear?: string;
   color?: string;
   fuelType?: string;
   salesPitch?: string;
-  image?: {
-    url: string;
-    base64: string;
-  };
 };
 
 const CarProduct = ({
   brandName,
   modelName,
+  vehicleType,
   price,
   modelYear,
   color,
   fuelType,
   salesPitch,
-  image,
 }: CarProductProps) => {
   const [hasSelected, setHasSelected] = useState(false);
+  const carImage = useChatStore((state) => state.carImage);
+  const setCarImage = useChatStore((state) => state.setCarImage);
   const { append } = useChat({
     id: "auto-dealer",
   });
@@ -73,6 +74,24 @@ const CarProduct = ({
     });
     setHasSelected(true);
   };
+
+  useEffect(() => {
+    if (!modelName || !color || !brandName || !vehicleType || !modelYear)
+      return;
+    const fetchImage = async () => {
+      const image = await generateCarImage({
+        carMake: brandName,
+        carType: vehicleType,
+        carColor: color,
+        carModel: modelName,
+        carYear: modelYear,
+      });
+
+      setCarImage(image);
+    };
+
+    fetchImage();
+  }, [brandName, color, modelName, modelYear, vehicleType, setCarImage]);
 
   return (
     <motion.div
@@ -121,18 +140,18 @@ const CarProduct = ({
               transition={{ delay: 0.5 }}
               className="relative h-64 rounded-lg overflow-hidden basis-full"
             >
-              {image ? (
+              {carImage ? (
                 <Image
-                  src={image.url}
+                  src={carImage?.url}
                   alt={`${brandName} ${modelName}`}
                   className="size-full object-cover"
                   width={640}
                   height={360}
                   placeholder="blur"
-                  blurDataURL={image.base64}
+                  blurDataURL={carImage?.base64}
                 />
               ) : (
-                <div className="skeleton-div size-full"></div>
+                <div className="w-full h-full bg-gray-200 animate-pulse" />
               )}
             </motion.div>
 
@@ -177,7 +196,7 @@ const CarProduct = ({
           <div className="w-full flex justify-between items-center gap-2 flex-wrap">
             <Button
               variant="outline"
-              className="flex items-center gap-2 skeleton-div"
+              className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handleScheduleTestDrive}
               disabled={hasSelected}
             >
@@ -186,7 +205,7 @@ const CarProduct = ({
             </Button>
             <Button
               variant="outline"
-              className="flex items-center gap-2 skeleton-div"
+              className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handleFinance}
               disabled={hasSelected}
             >
@@ -194,7 +213,7 @@ const CarProduct = ({
               <Percent className="w-4 h-4" />
             </Button>
             <Button
-              className="flex items-center gap-2 skeleton-div flex-grow"
+              className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handlePayNow}
               disabled={hasSelected}
             >

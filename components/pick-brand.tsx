@@ -126,16 +126,16 @@ export default function PickBrand({ carBrands }: PickBrandProps) {
                         {origin}
                       </Badge>
                       <div className="grid grid-cols-2 gap-2">
-                        {brands.map((brand) => (
+                        {brands.map((brand, index) => (
                           <motion.div
-                            key={brand.id}
+                            key={brand.id + "_" + index}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
                             <Button
                               variant={
                                 selectedBrands.includes(brand.id)
-                                  ? "default"
+                                  ? "secondary"
                                   : "outline"
                               }
                               className="w-full relative"

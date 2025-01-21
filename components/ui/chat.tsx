@@ -29,7 +29,7 @@ export const Chat = () => {
   }
 
   return (
-    <div className="flex flex-col space-y-4 h-full w-full overflow-x-hidden py-14">
+    <section className="flex flex-col space-y-4 min-h-screen w-full overflow-x-hidden py-14">
       {messages.map((m: Message) => (
         <div key={m.id} className="w-full container flex justify-center">
           <MessageComponent
@@ -45,6 +45,6 @@ export const Chat = () => {
         </div>
       )}
       {messages?.length > 0 && <FloatingReset />}
-    </div>
+    </section>
   );
 };

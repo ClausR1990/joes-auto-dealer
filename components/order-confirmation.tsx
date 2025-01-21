@@ -9,14 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { orderConfirmationSchema } from "@/data/schemas";
+import { useChatStore } from "@/store";
 import { z } from "zod";
 
 type CarReceiptProps = Partial<z.infer<typeof orderConfirmationSchema>>;
 
 export function OrderConfirmation(props: CarReceiptProps) {
-  console.log("OrderConfirmation", props);
-
-  const { imageUrl, product, orderDate, deliveryDate } = props;
+  const carImage = useChatStore((state) => state.carImage);
+  const { product, orderDate, deliveryDate } = props;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -46,14 +46,18 @@ export function OrderConfirmation(props: CarReceiptProps) {
             transition={{ type: "spring", stiffness: 300 }}
             className="relative mb-6 h-48 w-full overflow-hidden rounded-lg sm:h-64 skeleton-div"
           >
-            <Image
-              src={imageUrl || "/placeholder.svg"}
-              alt={`${product?.carMake} ${product?.carModel}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority
-            />
+            {carImage ? (
+              <Image
+                src={carImage?.url}
+                alt={`${product?.carMake} ${product?.carModel}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 animate-pulse" />
+            )}
           </motion.div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-3">

@@ -14,17 +14,41 @@ type CarImagePrompt = {
   carType: string;
   carColor: string;
   carMake: string;
+  carModel: string;
+  carYear: string;
 };
 
 export const generateCarImage = async ({
   carColor,
   carMake,
   carType,
+  carModel,
+  carYear,
 }: CarImagePrompt) => {
   const car = await openaiInstance.images.generate({
     model: "dall-e-3",
-    prompt: `A detailed, realistic photo of a ${carColor} colored ${carMake} ${carType} with significant visible damage from a full angled view.
-    The ${carType} has a cracked front bumper, dent, and a "For Sale" sign on the windshield, wide shot, photorealistic`,
+    prompt: `Create a professional, high-quality automotive photograph of a ${carColor} ${carMake} ${carType} at a car dealership.
+
+Main subject:
+- Vehicle: ${carMake} ${carModel} ${carType} from ${carYear} in ${carColor} metallic paint
+- Angle: 3/4 front view, slightly elevated
+- Setting: Clean, well-lit dealership showroom or outdoor lot
+
+Key details:
+- Natural lighting with subtle reflections on the metallic paint
+- Sharp focus on the vehicle with slight background blur
+- Professional car photography style with attention to highlights and shadows
+- Clean, uncluttered background typical of dealership environments
+- Visible dealership elements like price tags or promotional materials
+- Pristine condition showcasing the vehicle's design features
+
+Technical specifications:
+- Photorealistic style
+- High contrast and sharp details
+- Professional automotive photography lighting
+- High dynamic range to capture metallic paint effects
+
+Do not include: people, text overlays, watermarks, or unrealistic modifications.`,
     n: 1,
     quality: "standard",
     size: "1024x1024",
@@ -104,10 +128,33 @@ export const generateCarBrands = async (props: CarModelPayload) => {
           .max(25)
           .describe("15-25 car brands"),
       }),
-      prompt: `Create a list of 15-25 car brands with their id, name, and origin.
-      The id should be in lowercase, the name should be in title case, and the origin should be the country of origin of the brand.
-      The list should include brands like BMW, Toyota, and Ford.
-      Take into account the user's preferences: ${JSON.stringify({ props })}`,
+      prompt: `You are a car dealership expert. Generate a curated list of car manufacturers that match these specific criteria:
+
+Vehicle Type: ${props.vehicleType}
+Fuel Type: ${props.fuelType}
+Budget Range: ${props.budget}
+
+Rules:
+1. Only include manufacturers that actively produce ${props.vehicleType}s
+2. Focus on brands that offer ${props.fuelType} vehicles
+3. Prioritize manufacturers within the ${props.budget} price range
+4. Include a mix of mainstream and premium brands if appropriate for the budget
+
+Requirements:
+- Generate between 15-25 relevant car brands
+- Each brand must be a legitimate automobile manufacturer
+- No duplicates or subsidiaries of the same parent company
+- No discontinued or defunct brands
+- Include origin country for each brand
+- Format brand IDs in lowercase (e.g., "bmw")
+- Format brand names in title case (e.g., "BMW")
+
+Example format:
+{
+  id: "bmw",
+  name: "BMW",
+  origin: "Germany"
+}`,
     });
 
     return object;
@@ -140,21 +187,20 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
         salesPitch: z
           .string()
           .describe(
-            "A funny sales pitch for the car. The car is really damaged, so the sales pitch should be about how the damage is a good thing."
+            "A sassy, southern-style sales pitch full of charm and humor. Use southern expressions and slang. Make light of the car's condition with playful euphemisms."
           ),
       }),
-      prompt: `Pick the dream car for the user based on their preferences. The user wants a car with the following preferences: ${JSON.stringify(
-        { props }
-      )}`,
+      prompt: `As a southern car dealer, suggest a car matching:
+Vehicle: ${props.vehicleType}
+Brands: ${props.brandNames.join(", ")}
+Budget: ${props.budget}
+Color: ${props.color}
+Fuel: ${props.fuelType}
+
+Keep the sales pitch short, sassy, and southern-styled.`,
     });
 
-    const image = await generateCarImage({
-      carColor: object.color,
-      carMake: object.brandName,
-      carType: `${object.modelYear} ${object.modelName} ${props.vehicleType}`,
-    });
-
-    return { ...props, ...object, image };
+    return { ...props, ...object };
   } catch (error) {
     console.error("Error generating dream car", error);
     return null;

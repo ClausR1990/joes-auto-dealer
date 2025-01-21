@@ -7,12 +7,14 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/store";
 
 interface FloatingResetProps {
   className?: string;
 }
 
 export function FloatingReset({ className }: FloatingResetProps) {
+  const setCarImage = useChatStore((state) => state.setCarImage);
   const { reload, setMessages, append, isLoading } = useChat({
     id: "auto-dealer",
   });
@@ -25,6 +27,7 @@ export function FloatingReset({ className }: FloatingResetProps) {
       role: "user",
       content: "Find me my dream car.",
     });
+    setCarImage(null);
   };
 
   return (

@@ -118,7 +118,9 @@ export default function PickBudget({ budgets }: BudgetRangeProps) {
 
           <div className="px-3">
             <Slider
-              defaultValue={[getMidRangeBudget(budgets)]}
+              defaultValue={[
+                Math.round(getMidRangeBudget(budgets) / 1000) * 1000,
+              ]}
               max={getMaxBudget(budgets)}
               min={getMinBudget(budgets)}
               step={1000}
@@ -137,7 +139,9 @@ export default function PickBudget({ budgets }: BudgetRangeProps) {
                   variant={selectedRange === range ? "secondary" : "outline"}
                   className="relative overflow-hidden"
                   onClick={() => {
-                    setBudget(range.min);
+                    // Round to nearest thousand
+                    const roundedBudget = Math.round(range.min / 1000) * 1000;
+                    setBudget(roundedBudget);
                     setSelectedRange(range);
                   }}
                   disabled={hasSelected}
