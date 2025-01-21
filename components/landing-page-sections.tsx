@@ -41,7 +41,7 @@ export const LandingSection = ({
           )}
         >
           <div className="space-y-4">
-            <AnimatedCar className="text-secondary -mb-6 size-16" />
+            <AnimatedCar className="text-secondary hidden lg:block -mb-6 size-16" />
             <motion.h2
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -99,6 +99,7 @@ export function LandingContent() {
   return (
     <>
       <LandingSection
+        key="ai-matching"
         title="AI-Powered Car Matching"
         description="Our sophisticated AI technology analyzes your preferences, driving habits, and lifestyle to recommend the perfect vehicles for you. Experience personalized car shopping that understands your needs and budget constraints."
         image="/ai-salesmen.webp"
@@ -106,6 +107,7 @@ export function LandingContent() {
       />
 
       <LandingSection
+        key="virtual-assistant"
         title="24/7 Virtual Assistant"
         description="Get instant answers to your questions anytime, anywhere. Our AI assistant helps you explore vehicles, compare options, and schedule test drives - all at your convenience. Experience round-the-clock support tailored to your car-buying journey."
         image="/virtual-assistant.webp"
@@ -113,6 +115,7 @@ export function LandingContent() {
       />
 
       <LandingSection
+        key="seamless-buying"
         title="Seamless Buying Experience"
         description="From initial search to final purchase, enjoy a streamlined process that puts you in control. Compare prices, explore financing options, and even complete your purchase online. Experience the future of car buying with our innovative platform."
         image="/seamless-buying-experience.webp"

@@ -34,7 +34,11 @@ export const AnimatedCar = forwardRef<
         className={className}
         initial={{ x: -100, opacity: 0 }}
         whileInView={{ x: 0, opacity: 1 }}
-        viewport={{ once: false }}
+        viewport={{
+          once: false,
+          amount: "some", // This makes it trigger when any part of the element is visible
+          margin: "0px 100px 0px 0px", // Add some margin to trigger earlier
+        }}
         transition={{ duration: 0.5, type: "spring", stiffness: 100, delay }}
         {...props}
       >
