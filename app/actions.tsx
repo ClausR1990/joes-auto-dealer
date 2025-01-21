@@ -23,8 +23,8 @@ export const generateCarImage = async ({
 }: CarImagePrompt) => {
   const car = await openaiInstance.images.generate({
     model: "dall-e-3",
-    prompt: `A detailed and realistic photo of a ${carColor} colored ${carMake} ${carType} with significant visible damage from a full angled view.
-    The ${carType} has a cracked front bumper, dent.,`,
+    prompt: `A detailed, realistic photo of a ${carColor} colored ${carMake} ${carType} with significant visible damage from a full angled view.
+    The ${carType} has a cracked front bumper, dent, and a "For Sale" sign on the windshield, wide shot, photorealistic`,
     n: 1,
     quality: "standard",
     size: "1024x1024",

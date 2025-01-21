@@ -53,7 +53,7 @@ export function PaymentForm({ amount = 9.99, onSuccess }: PaymentFormProps) {
 
       append({
         role: "system",
-        content: `Payment successful! Thank you for your purchase.`,
+        content: `Payment successful! Thank you for your purchase. Has the user got insurance for the car? If not, show the insurance calculator.`,
       });
 
       onSuccess?.();

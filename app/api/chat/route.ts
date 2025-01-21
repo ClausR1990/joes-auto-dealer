@@ -6,7 +6,9 @@ import {
 } from "@/app/actions";
 import {
   financeCalculatorSchema,
+  insuranceCalculatorSchema,
   orderConfirmationSchema,
+  SYSTEM_PROMPT,
 } from "@/data/schemas";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, tool } from "ai";
@@ -18,34 +20,11 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const coreMessages = convertToCoreMessages(messages).filter(
-    (message) => message.content.length > 0
-  );
+  const coreMessages = convertToCoreMessages(messages);
 
   const result = streamText({
     model: openai("gpt-4o"),
-    system: `\n
-    You are a car dealer assistant.
-      - You help the user find their dream car.
-      - keep resposes limited to a sentence or two.
-      - DO NOT output lists or tables.
-      - after every tool call, pretend you're showing the result to the user and keep your response limited to a phrase.
-      - today's date is ${new Date().toLocaleDateString()}.
-      - ask for any details you don't know.
-      - The user doesn't have an input field unless you call showInputField.
-      - IMPORTANT use tools rather than asking for user input.
-      - IMPORTANT If you ask a question after calling getDreamCarResults, show the input field.
-      - When the user is ready to pay show the payment form.
-      - here's the optimal flow:
-        - Get the vehicle type from the user.
-        - Get the budget from the user.
-        - Get the color preference from the user.
-        - Get the fuel type from the user.
-        - Get the brand preference from the user.
-        - Choose a dream car for the user by calling getDreamCarResults.
-        - call showInputField
-        - call paymentForm
-    `,
+    system: SYSTEM_PROMPT,
     messages: coreMessages,
     toolChoice: "auto",
     maxSteps: 4,
@@ -110,7 +89,7 @@ export async function POST(req: Request) {
         },
       }),
       showInputField: tool({
-        description: "Show the input field",
+        description: "Show the input field when you need user input",
         parameters: z.object({}),
         execute: async () => {
           return {};
@@ -132,8 +111,9 @@ export async function POST(req: Request) {
           };
         },
       }),
-      paymentForm: tool({
-        description: "Show the payment form",
+      processPayment: tool({
+        description:
+          "Process the payment for the car, results successful or failed",
         parameters: z.object({
           amount: z
             .number()
@@ -148,13 +128,19 @@ export async function POST(req: Request) {
         description: "Show the order confirmation after payment",
         parameters: orderConfirmationSchema,
         execute: async (props) => {
-          console.log("Order confirmation", props);
           return props;
         },
       }),
-      showFinanceCalculator: tool({
-        description: "Show the finance calculator",
+      applyForFinancing: tool({
+        description: "Show the finance calculator to apply for financing",
         parameters: financeCalculatorSchema,
+        execute: async (props) => {
+          return props;
+        },
+      }),
+      applyForInsurance: tool({
+        description: "Show the insurance calculator to apply for insurance",
+        parameters: insuranceCalculatorSchema,
         execute: async (props) => {
           return props;
         },

@@ -1,13 +1,21 @@
 "use client";
 import { Message as MessageComponent } from "@/components/message";
+import { useChatStore } from "@/store";
 import { Message, useChat } from "ai/react";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { FloatingReset } from "../floating-reset-button";
 
 export const Chat = () => {
+  const setMessages = useChatStore((state) => state.setMessages);
+  const initialMessages = useChatStore((state) => state.messages);
   const { messages, isLoading } = useChat({
     id: "auto-dealer",
+    initialMessages,
+    onFinish: (message) => {
+      console.log("onFinish", message);
+      setMessages(message);
+    },
   });
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Bot, Search } from "lucide-react";
 import Image from "next/image";
 
 export default function AutoDealerHero() {
@@ -36,7 +36,8 @@ export default function AutoDealerHero() {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="inline-block"
               >
-                <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold bg-primary/10 text-primary">
+                <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-primary/10 text-primary">
+                  <Bot className="w-5 h-5 inline-block mr-2" />
                   Powered by AI Technology
                 </span>
               </motion.div>
@@ -75,7 +76,7 @@ export default function AutoDealerHero() {
                 size="lg"
               >
                 <Search className="w-5 h-5" />
-                Start Your Search
+                Let&apos;s Get Started
               </Button>
             </motion.div>
             <motion.div

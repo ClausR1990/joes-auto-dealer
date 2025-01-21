@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { ChatInput } from "./chat-input";
 import CarProduct from "./dream-car-showcase";
 import FinanceCalculator from "./finance-calculator";
+import InsuranceCalculator from "./insurance";
 import { OrderConfirmation } from "./order-confirmation";
 import { PaymentForm } from "./payment-form";
 import PickBrand from "./pick-brand";
@@ -13,7 +14,6 @@ import { PickVehicleType } from "./pick-vehicle-type";
 import { TestDriveForm } from "./test-drive-form";
 
 export const ToolComponentMapper = (props: ToolInvocation) => {
-  console.log("🚀", props);
   if (props.state === "result") {
     const { result, toolName } = props;
     if (toolName === "pickVehicleType") {
@@ -37,7 +37,7 @@ export const ToolComponentMapper = (props: ToolInvocation) => {
     if (toolName === "showInputField") {
       return <ChatInput />;
     }
-    if (toolName === "paymentForm") {
+    if (toolName === "processPayment") {
       return <PaymentForm {...result} />;
     }
     if (toolName === "scheduleATestDrive") {
@@ -46,11 +46,14 @@ export const ToolComponentMapper = (props: ToolInvocation) => {
     if (toolName === "showOrderConfirmation") {
       return <OrderConfirmation {...result} />;
     }
-    if (toolName === "showFinanceCalculator") {
+    if (toolName === "applyForFinancing") {
       return <FinanceCalculator {...result} />;
     }
+    if (toolName === "applyForInsurance") {
+      return <InsuranceCalculator {...result} />;
+    }
 
-    return <pre>{JSON.stringify(result, null, 2)}</pre>;
+    return null;
   } else {
     return (
       <div className="skeleton">
@@ -83,7 +86,7 @@ const LoadingUI = (props: ToolInvocation) => {
   if (toolName === "showInputField") {
     return <ChatInput />;
   }
-  if (toolName === "paymentForm") {
+  if (toolName === "processPayment") {
     return <PaymentForm amount={0} />;
   }
   if (toolName === "scheduleATestDrive") {
@@ -92,8 +95,11 @@ const LoadingUI = (props: ToolInvocation) => {
   if (toolName === "showOrderConfirmation") {
     return <OrderConfirmation />;
   }
-  if (toolName === "showFinanceCalculator") {
+  if (toolName === "applyForFinancing") {
     return <FinanceCalculator />;
+  }
+  if (toolName === "applyForInsurance") {
+    return <InsuranceCalculator />;
   }
 
   return <Loader2 className="animate-spin" />;

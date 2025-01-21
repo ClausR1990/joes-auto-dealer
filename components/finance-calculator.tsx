@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { financeCalculatorSchema } from "@/data/schemas";
+import { useChat } from "ai/react";
 import { z } from "zod";
 
 type FinanceCalculatorProps = Partial<z.infer<typeof financeCalculatorSchema>>;
@@ -19,31 +20,57 @@ export default function FinanceCalculator({
   carPrice = 0,
   carMake = "Tesla",
   carModel = "Model 3",
+  interestRate = 4.9,
 }: FinanceCalculatorProps) {
   const [downPayment, setDownPayment] = useState(carPrice * 0.2); // 20% default down payment
   const [loanTerm, setLoanTerm] = useState(60); // 60 months default
-  const [interestRate, setInterestRate] = useState(4.9); // 4.9% default APR
+  const [hasSelected, setHasSelected] = useState(false);
+  const { append } = useChat({
+    id: "auto-dealer",
+  });
 
   const calculateMonthlyPayment = () => {
-    const principal = carPrice - downPayment;
+    const principal = Math.max(0, carPrice - downPayment); // Prevent negative principal
     const monthlyRate = interestRate / 100 / 12;
-    const numberOfPayments = loanTerm;
 
+    if (monthlyRate === 0) {
+      // Special case: zero interest rate
+      return principal / loanTerm;
+    }
+
+    const numberOfPayments = loanTerm;
     const monthlyPayment =
       (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
       (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
-    return isNaN(monthlyPayment) ? 0 : monthlyPayment;
+    return isNaN(monthlyPayment) ? 0 : Math.round(monthlyPayment * 100) / 100; // Round to two decimals
   };
 
-  const monthlyPayment = calculateMonthlyPayment();
-  const totalCost = monthlyPayment * loanTerm + downPayment;
+  const roundToTwo = (value: number) => Math.round(value * 100) / 100;
+
+  const monthlyPayment = roundToTwo(calculateMonthlyPayment());
+  const totalCost = roundToTwo(monthlyPayment * loanTerm + downPayment);
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   });
+
+  const handleLoanTermChange = (value: number) => {
+    const validValue = Math.round(value / 6) * 6; // Round to nearest multiple of 6
+    setLoanTerm(validValue);
+  };
+
+  const handleApplyForFinancing = () => {
+    append({
+      role: "system",
+      content: `The financing application was approved! You can expect to pay ${formatter.format(
+        monthlyPayment
+      )} per month for ${loanTerm} months. The down payment is: ${downPayment}. Present the payment form to the user for the down payment.`,
+    });
+    setHasSelected(true);
+  };
 
   return (
     <motion.div
@@ -82,6 +109,7 @@ export default function FinanceCalculator({
                       value={downPayment}
                       onChange={(e) => setDownPayment(Number(e.target.value))}
                       className="flex-1"
+                      disabled={hasSelected}
                     />
                     <div className="w-20 text-sm text-muted-foreground">
                       {((downPayment / carPrice) * 100).toFixed(0)}%
@@ -93,6 +121,7 @@ export default function FinanceCalculator({
                     max={carPrice}
                     step={1000}
                     className="py-2"
+                    disabled={hasSelected}
                   />
                 </div>
 
@@ -105,6 +134,7 @@ export default function FinanceCalculator({
                       value={loanTerm}
                       onChange={(e) => setLoanTerm(Number(e.target.value))}
                       className="flex-1"
+                      disabled={hasSelected}
                     />
                     <div className="w-20 text-sm text-muted-foreground">
                       {(loanTerm / 12).toFixed(1)} years
@@ -112,36 +142,14 @@ export default function FinanceCalculator({
                   </div>
                   <Slider
                     value={[loanTerm]}
-                    onValueChange={([value]) => setLoanTerm(value)}
+                    onValueChange={([value]) =>
+                      handleLoanTermChange(Number(value))
+                    }
                     min={12}
                     max={84}
-                    step={12}
+                    step={6}
                     className="py-2"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="interest-rate">Interest Rate (APR)</Label>
-                  <div className="flex items-center space-x-4">
-                    <Input
-                      id="interest-rate"
-                      type="number"
-                      value={interestRate}
-                      onChange={(e) => setInterestRate(Number(e.target.value))}
-                      className="flex-1"
-                      step={0.1}
-                    />
-                    <div className="w-20 text-sm text-muted-foreground">
-                      {interestRate}%
-                    </div>
-                  </div>
-                  <Slider
-                    value={[interestRate]}
-                    onValueChange={([value]) => setInterestRate(value)}
-                    min={0}
-                    max={20}
-                    step={0.1}
-                    className="py-2"
+                    disabled={hasSelected}
                   />
                 </div>
               </div>
@@ -208,7 +216,13 @@ export default function FinanceCalculator({
                   </div>
                 </div>
               </div>
-              <Button className="w-full">Apply for Financing</Button>
+              <Button
+                className="w-full"
+                onClick={handleApplyForFinancing}
+                disabled={hasSelected}
+              >
+                Apply for Financing
+              </Button>
             </TabsContent>
           </Tabs>
         </CardContent>
