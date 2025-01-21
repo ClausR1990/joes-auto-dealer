@@ -16,10 +16,14 @@ export const Chat = () => {
     }
   }, [messages]);
 
+  if (messages.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col space-y-4 h-full">
+    <div className="flex flex-col space-y-4 h-full w-full overflow-x-hidden py-14">
       {messages.map((m: Message) => (
-        <div key={m.id}>
+        <div key={m.id} className="w-full container flex justify-center">
           <MessageComponent
             role={m.role}
             content={m.content}
@@ -28,7 +32,7 @@ export const Chat = () => {
         </div>
       ))}
       {isLoading && (
-        <div className="w-full flex justify-center items-center">
+        <div className="w-full flex justify-center items-center py-4">
           <Loader2 className="animate-spin" />
         </div>
       )}

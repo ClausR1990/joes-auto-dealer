@@ -8,7 +8,7 @@ export default function Home() {
     <>
       <AutoDealerHero />
       <main
-        className="flex flex-col items-center justify-center space-y-6 container max-w-full py-24"
+        className="flex flex-col items-center justify-center space-y-6 max-w-full"
         id="main"
       >
         <Chat />
