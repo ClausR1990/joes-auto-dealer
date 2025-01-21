@@ -13,7 +13,7 @@ interface FloatingResetProps {
 }
 
 export function FloatingReset({ className }: FloatingResetProps) {
-  const { reload, setMessages, append } = useChat({
+  const { reload, setMessages, append, isLoading } = useChat({
     id: "auto-dealer",
   });
   const [isHovered, setIsHovered] = React.useState(false);
@@ -41,6 +41,7 @@ export function FloatingReset({ className }: FloatingResetProps) {
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        disabled={isLoading}
       >
         <motion.div className="flex items-center">
           <motion.div

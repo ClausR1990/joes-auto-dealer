@@ -4,6 +4,10 @@ import {
   generateDreamCar,
   getTestDriveTimeSlots,
 } from "@/app/actions";
+import {
+  financeCalculatorSchema,
+  orderConfirmationSchema,
+} from "@/data/schemas";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, tool } from "ai";
 import { z } from "zod";
@@ -77,9 +81,13 @@ export async function POST(req: Request) {
       }),
       pickBrandPreference: tool({
         description: "Pick a brand preference",
-        parameters: z.object({}),
-        execute: async () => {
-          const data = await generateCarBrands();
+        parameters: z.object({
+          vehicleType: z.string().describe("type of the vehicle"),
+          fuelType: z.string().describe("fuel type of the car"),
+          budget: z.string().describe("The users budget"),
+        }),
+        execute: async (props) => {
+          const data = await generateCarBrands(props);
           return data;
         },
       }),
@@ -134,6 +142,21 @@ export async function POST(req: Request) {
         }),
         execute: async ({ amount }) => {
           return { amount };
+        },
+      }),
+      showOrderConfirmation: tool({
+        description: "Show the order confirmation after payment",
+        parameters: orderConfirmationSchema,
+        execute: async (props) => {
+          console.log("Order confirmation", props);
+          return props;
+        },
+      }),
+      showFinanceCalculator: tool({
+        description: "Show the finance calculator",
+        parameters: financeCalculatorSchema,
+        execute: async (props) => {
+          return props;
         },
       }),
     },

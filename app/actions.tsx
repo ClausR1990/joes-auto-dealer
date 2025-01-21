@@ -79,7 +79,13 @@ export const generateBudgetRanges = async () => {
   }
 };
 
-export const generateCarBrands = async () => {
+type CarModelPayload = {
+  vehicleType: string;
+  fuelType: string;
+  budget: string;
+};
+
+export const generateCarBrands = async (props: CarModelPayload) => {
   try {
     const { object } = await generateObject({
       model: openai("gpt-4o"),
@@ -100,7 +106,8 @@ export const generateCarBrands = async () => {
       }),
       prompt: `Create a list of 15-25 car brands with their id, name, and origin.
       The id should be in lowercase, the name should be in title case, and the origin should be the country of origin of the brand.
-      The list should include brands like BMW, Toyota, and Ford.`,
+      The list should include brands like BMW, Toyota, and Ford.
+      Take into account the user's preferences: ${JSON.stringify({ props })}`,
     });
 
     return object;

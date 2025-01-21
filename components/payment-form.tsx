@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useChat } from "ai/react";
+import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
 interface PaymentFormProps {
   amount: number;
@@ -102,7 +103,9 @@ export function PaymentForm({ amount = 9.99, onSuccess }: PaymentFormProps) {
               Processing...
             </>
           ) : paymentComplete ? (
-            `Payment Complete`
+            <>
+              <AnimatedCheckMark /> Payment Complete
+            </>
           ) : (
             `Pay ${formatCurrency(amount)}`
           )}

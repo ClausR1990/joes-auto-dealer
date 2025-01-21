@@ -2,6 +2,8 @@ import { ToolInvocation } from "ai";
 import { Loader2 } from "lucide-react";
 import { ChatInput } from "./chat-input";
 import CarProduct from "./dream-car-showcase";
+import FinanceCalculator from "./finance-calculator";
+import { OrderConfirmation } from "./order-confirmation";
 import { PaymentForm } from "./payment-form";
 import PickBrand from "./pick-brand";
 import PickBudget from "./pick-budget";
@@ -11,6 +13,7 @@ import { PickVehicleType } from "./pick-vehicle-type";
 import { TestDriveForm } from "./test-drive-form";
 
 export const ToolComponentMapper = (props: ToolInvocation) => {
+  console.log("🚀", props);
   if (props.state === "result") {
     const { result, toolName } = props;
     if (toolName === "pickVehicleType") {
@@ -39,6 +42,12 @@ export const ToolComponentMapper = (props: ToolInvocation) => {
     }
     if (toolName === "scheduleATestDrive") {
       return <TestDriveForm {...result} />;
+    }
+    if (toolName === "showOrderConfirmation") {
+      return <OrderConfirmation {...result} />;
+    }
+    if (toolName === "showFinanceCalculator") {
+      return <FinanceCalculator {...result} />;
     }
 
     return <pre>{JSON.stringify(result, null, 2)}</pre>;
@@ -79,6 +88,12 @@ const LoadingUI = (props: ToolInvocation) => {
   }
   if (toolName === "scheduleATestDrive") {
     return <TestDriveForm />;
+  }
+  if (toolName === "showOrderConfirmation") {
+    return <OrderConfirmation />;
+  }
+  if (toolName === "showFinanceCalculator") {
+    return <FinanceCalculator />;
   }
 
   return <Loader2 className="animate-spin" />;

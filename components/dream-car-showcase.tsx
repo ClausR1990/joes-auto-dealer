@@ -16,8 +16,10 @@ import {
   DollarSignIcon,
   Fuel,
   Paintbrush,
+  Percent,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 export type CarProductProps = {
   brandName?: string;
@@ -43,6 +45,7 @@ const CarProduct = ({
   salesPitch,
   image,
 }: CarProductProps) => {
+  const [hasSelected, setHasSelected] = useState(false);
   const { append } = useChat({
     id: "auto-dealer",
   });
@@ -52,6 +55,7 @@ const CarProduct = ({
       role: "user",
       content: "I want to pay for this car now.",
     });
+    setHasSelected(true);
   };
 
   const handleScheduleTestDrive = () => {
@@ -59,6 +63,15 @@ const CarProduct = ({
       role: "user",
       content: "I want to schedule a test drive.",
     });
+    setHasSelected(true);
+  };
+
+  const handleFinance = () => {
+    append({
+      role: "user",
+      content: "I want to finance this car.",
+    });
+    setHasSelected(true);
   };
 
   return (
@@ -161,18 +174,29 @@ const CarProduct = ({
         </CardContent>
 
         <CardFooter className="p-6 bg-gray-50">
-          <div className="w-full flex justify-between items-center">
+          <div className="w-full flex justify-between items-center gap-2 flex-wrap">
             <Button
               variant="outline"
               className="flex items-center gap-2 skeleton-div"
               onClick={handleScheduleTestDrive}
+              disabled={hasSelected}
             >
               Schedule Test Drive
               <ChevronRight className="w-4 h-4" />
             </Button>
             <Button
+              variant="outline"
               className="flex items-center gap-2 skeleton-div"
+              onClick={handleFinance}
+              disabled={hasSelected}
+            >
+              I want to finance
+              <Percent className="w-4 h-4" />
+            </Button>
+            <Button
+              className="flex items-center gap-2 skeleton-div flex-grow"
               onClick={handlePayNow}
+              disabled={hasSelected}
             >
               Pay Now
               <DollarSignIcon className="w-4 h-4" />
