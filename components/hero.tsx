@@ -69,7 +69,8 @@ export default function AutoDealerHero() {
             </div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
               transition={{ delay: 0.5, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-4"
             >
@@ -110,9 +111,10 @@ export default function AutoDealerHero() {
           >
             <motion.div
               initial={{ x: 500 }}
-              animate={{
+              whileInView={{
                 x: 0,
               }}
+              viewport={{ once: false }}
               transition={{
                 ease: "easeInOut",
                 duration: 1,
@@ -120,7 +122,7 @@ export default function AutoDealerHero() {
               className="relative h-full"
             >
               <Image
-                src="/hero-car.webp"
+                src="/hero-car-yellow.webp"
                 alt="Luxury Car Showcase"
                 fill
                 className="object-contain"
@@ -136,10 +138,10 @@ export default function AutoDealerHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 2 }}
           viewBox="0 0 150 100"
-          className="absolute size-full right-0 top-1/2 -translate-y-1/2 translate-x-1/4 z-0"
+          className="absolute size-full right-0 translate-x-1/4 z-0"
         >
           <motion.path
-            className="fill-primary/50 md:fill-primary"
+            className="fill-primary/50 md:fill-primary/20"
             d="M44.7,-53.4C60.3,-40.1,77.1,-28.3,79.4,-14.2C81.6,0,69.5,16.5,58.3,31.5C47.1,46.5,36.9,59.9,23.4,65.2C9.9,70.5,-6.8,67.6,-23,62.1C-39.1,56.7,-54.6,48.6,-64.9,35.3C-75.1,22,-80,3.5,-77,-13.6C-74,-30.7,-63.1,-46.4,-48.9,-60C-34.8,-73.5,-17.4,-85,-1.4,-83.3C14.5,-81.5,29,-66.7,44.7,-53.4Z"
             transform="translate(100 100)"
             animate={{

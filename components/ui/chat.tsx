@@ -2,7 +2,7 @@
 import { Message as MessageComponent } from "@/components/message";
 import { useChatStore } from "@/store";
 import { Message, useChat } from "ai/react";
-import { Loader2 } from "lucide-react";
+import { BotIcon, Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { FloatingReset } from "../floating-reset-button";
 
@@ -13,8 +13,7 @@ export const Chat = () => {
     id: "auto-dealer",
     initialMessages,
     onFinish: (message) => {
-      console.log("onFinish", message);
-      setMessages(message);
+      setMessages(message); // Store messages in Zustand when chat finishes
     },
   });
 
@@ -36,12 +35,18 @@ export const Chat = () => {
             role={m.role}
             content={m.content}
             toolInvocations={m.toolInvocations}
+            isLoading={isLoading}
           />
         </div>
       ))}
       {isLoading && (
-        <div className="w-full flex justify-center items-center py-4">
-          <Loader2 className="animate-spin" />
+        <div className="w-full container flex justify-center">
+          <div className="flex flex-col items-center sm:flex-row gap-4 w-full max-w-lg">
+            <div className="size-[24px] border rounded-sm p-1 flex flex-col justify-center items-center shrink-0 text-zinc-500">
+              <BotIcon />
+            </div>
+            <Loader2 className="animate-spin size-5 text-foreground" />
+          </div>
         </div>
       )}
       {messages?.length > 0 && <FloatingReset />}
