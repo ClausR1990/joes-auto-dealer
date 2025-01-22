@@ -6,8 +6,6 @@ import OpenAI from "openai";
 import { getPlaiceholder } from "plaiceholder";
 import { z } from "zod";
 
-export const maxDuration = 30;
-
 const openaiInstance = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });

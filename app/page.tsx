@@ -3,6 +3,7 @@ import { LandingContent } from "@/components/landing-page-sections";
 import { Chat } from "@/components/ui/chat";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export default function Home() {
   return (
