@@ -39,9 +39,9 @@ export const Chat = () => {
           />
         </div>
       ))}
-      {isLoading && (
+      {!isLoading && (
         <div className="w-full container flex justify-center">
-          <div className="flex flex-col items-center sm:flex-row gap-4 w-full max-w-lg">
+          <div className="flex items-center flex-row gap-4 w-full max-w-lg">
             <div className="size-[24px] border rounded-sm p-1 flex flex-col justify-center items-center shrink-0 text-zinc-500">
               <BotIcon />
             </div>

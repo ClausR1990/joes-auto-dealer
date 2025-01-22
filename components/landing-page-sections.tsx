@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Footer } from "./footer";
 import { AnimatedCar } from "./magic-ui/animated-car";
 
 type ContentSection = {
@@ -121,6 +122,8 @@ export function LandingContent() {
         image="/seamless-buying-experience.webp"
         imagePosition="right"
       />
+
+      <Footer />
     </>
   );
 }

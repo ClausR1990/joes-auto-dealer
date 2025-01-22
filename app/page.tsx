@@ -10,7 +10,7 @@ export default function Home() {
     <>
       <AutoDealerHero />
       <main
-        className="flex flex-col items-center justify-center space-y-6 max-w-full"
+        className="flex flex-col items-center justify-center space-y-6 max-w-full overflow-hidden"
         id="main"
       >
         <LandingContent />
