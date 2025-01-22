@@ -21,6 +21,14 @@ export const useChatStore = create<ChatStore, [["zustand/persist", ChatStore]]>(
       carImage: null,
       setCarImage: (image) => set({ carImage: image }),
     }),
-    { name: "chat-store" }
+    {
+      name: "chat-store",
+      partialize: (state) => ({
+        messages: state.messages,
+        setMessages: state.setMessages,
+        carImage: null, // Default value instead of actual state
+        setCarImage: state.setCarImage,
+      }),
+    }
   )
 );

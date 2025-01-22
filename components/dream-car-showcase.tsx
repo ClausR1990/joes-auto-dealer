@@ -9,6 +9,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useChatStore } from "@/store";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
@@ -17,6 +18,7 @@ import {
   ChevronRight,
   DollarSignIcon,
   Fuel,
+  Loader2,
   Paintbrush,
   Percent,
 } from "lucide-react";
@@ -151,7 +153,9 @@ const CarProduct = ({
                   blurDataURL={carImage?.base64}
                 />
               ) : (
-                <div className="w-full h-full bg-gray-200 animate-pulse" />
+                <Skeleton className="size-full flex items-center justify-center">
+                  <Loader2 className="size-8 animate-spin" />
+                </Skeleton>
               )}
             </motion.div>
 

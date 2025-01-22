@@ -208,7 +208,7 @@ export default function FinanceCalculator({
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-full bg-primary/30" />
-                      <span>Interest</span>
+                      <span>Interest at {interestRate}%</span>
                     </div>
                     <span className="font-medium">
                       {formatter.format(totalCost - carPrice)}
