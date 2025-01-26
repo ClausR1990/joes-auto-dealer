@@ -2,27 +2,82 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/store";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import { Bot, Search } from "lucide-react";
 import Image from "next/image";
+import { Browser } from "./magic-ui/browser";
+
+const tabs = [
+  {
+    id: "home",
+    title: "Joes Auto Dealer",
+    url: "joes-auto-dealer.vercel.app",
+    content: {
+      title: "Welcome to Joe's Auto Dealer",
+      description: "Find Your Dream Car with AI-Powered Recommendations",
+      cards: [
+        {
+          title: "Select your preferences",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          title: "AI recommendations",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          title: "Easy online payment flow",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+      ],
+    },
+  },
+  {
+    id: "knowdk",
+    title: "Knowit | Denmark",
+    url: "know.dk",
+    content: {
+      title: "Let's reshape it",
+      description:
+        "Dive into curated insights, articles, and updates on various topics.",
+      cards: [
+        {
+          title: "Tech Insights",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          title: "Global Perspectives",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          title: "Community Highlights",
+          image: "/placeholder.svg?height=200&width=300",
+        },
+      ],
+    },
+  },
+];
 
 export default function AutoDealerHero() {
-  const { append } = useChat({
+  const setImage = useChatStore((state) => state.setCarImage);
+  const { append, setMessages } = useChat({
     id: "auto-dealer",
   });
 
   const handleClick = () => {
+    setMessages([]);
     append({
       role: "user",
       content: "Find me my dream car.",
     });
+    setImage(null);
   };
 
   return (
     <section
       role="presentation"
-      className="min-h-screen relative w-full flex items-center bg-gradient-to-b from-background to-muted overflow-x-hidden"
+      className="min-h-screen relative w-full flex items-center bg-gradient-to-b from-background to-muted overflow-x-hidden py-14"
     >
       <div className="container max-w-[1920px] z-10">
         <div className="grid lg:grid-cols-2 gap-6 items-center">
@@ -102,33 +157,27 @@ export default function AutoDealerHero() {
                 <span className="text-muted-foreground">Satisfaction</span>
               </div>
             </motion.div>
+            <div className="text-muted-foreground text-xs max-w-lg hyphens-auto">
+              Disclaimer: This is a fictional car dealership website created as
+              a demonstration. No actual vehicles are available for purchase,
+              and no real transactions can be processed. All content, including
+              images and descriptions, are for illustrative purposes only.
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="relative h-full z-20"
+            className="relative z-20"
           >
-            <motion.div
-              initial={{ x: 500 }}
-              whileInView={{
-                x: 0,
-              }}
-              viewport={{ once: false }}
-              transition={{
-                ease: "easeInOut",
-                duration: 1,
-              }}
-              className="relative h-full"
-            >
-              <Image
-                src="/hero-car-yellow.webp"
-                alt="Luxury Car Showcase"
-                fill
-                className="object-contain"
-                priority
-              />
-            </motion.div>
+            <Browser tabs={tabs} className="hidden sm:block" />
+            <Image
+              className="absolute bottom-0 right-0 -mb-10 hidden sm:block"
+              src="/hero-car-yellow.webp"
+              alt=""
+              width={300}
+              height={200}
+            />
           </motion.div>
         </div>
       </div>

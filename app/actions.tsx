@@ -18,6 +18,46 @@ type CarImagePrompt = {
   carYear: string;
 };
 
+export const generateCarImageLocal = async ({
+  carColor,
+  carMake,
+  carType,
+  carModel,
+  carYear,
+}: CarImagePrompt) => {
+  try {
+    const response = await fetch("http://localhost:3000/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `ultra-detailed photograph of ${carColor} ${carYear} ${carMake} ${carModel} ${carType} in a showroom, professional automotive lighting, unedited raw photo, photorealistic`,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.image) {
+      return {
+        base64: "",
+        url: "",
+      };
+    }
+
+    return {
+      base64: data.image.trimEnd(),
+      url: `data:image/jpeg;base64,${data.image.trimEnd()}`,
+    };
+  } catch (error) {
+    console.error("Error generating car image:", error);
+    return {
+      base64: "",
+      url: "",
+    };
+  }
+};
+
 export const generateCarImage = async ({
   carColor,
   carMake,

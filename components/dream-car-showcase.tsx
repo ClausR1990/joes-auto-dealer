@@ -23,7 +23,7 @@ import {
   Percent,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type CarProductProps = {
   brandName?: string;
@@ -46,6 +46,7 @@ const CarProduct = ({
   fuelType,
   salesPitch,
 }: CarProductProps) => {
+  const isFirstMount = useRef(true);
   const [hasSelected, setHasSelected] = useState(false);
   const carImage = useChatStore((state) => state.carImage);
   const setCarImage = useChatStore((state) => state.setCarImage);
@@ -78,9 +79,26 @@ const CarProduct = ({
   };
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
     if (!modelName || !color || !brandName || !vehicleType || !modelYear)
       return;
     const fetchImage = async () => {
+      // if (process.env.NODE_ENV === "development") {
+      //   const image = await generateCarImageLocal({
+      //     carMake: brandName,
+      //     carType: vehicleType,
+      //     carColor: color,
+      //     carModel: modelName,
+      //     carYear: modelYear,
+      //   });
+
+      //   setCarImage(image);
+      //   return;
+      // }
       const image = await generateCarImage({
         carMake: brandName,
         carType: vehicleType,
