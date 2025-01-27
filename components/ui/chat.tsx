@@ -1,20 +1,22 @@
 "use client";
 import { Message as MessageComponent } from "@/components/message";
-import { useChatStore } from "@/store";
+import { Chat as DBChat } from "@prisma/client";
+import { generateId } from "ai";
 import { Message, useChat } from "ai/react";
 import { BotIcon, Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { FloatingReset } from "../floating-reset-button";
 
-export const Chat = () => {
-  const setMessages = useChatStore((state) => state.setMessages);
-  const initialMessages = useChatStore((state) => state.messages);
+type ChatProps = {
+  chat?: DBChat | null;
+};
+
+export const Chat = ({ chat }: ChatProps) => {
+  console.log("chat", chat?.messages);
   const { messages, isLoading } = useChat({
-    id: "auto-dealer",
-    initialMessages,
-    onFinish: (message) => {
-      setMessages(message); // Store messages in Zustand when chat finishes
-    },
+    id: chat?.id,
+    initialMessages: chat?.messages as unknown as Message[],
+    sendExtraMessageFields: true,
   });
 
   useEffect(() => {
@@ -23,14 +25,17 @@ export const Chat = () => {
     }
   }, [messages]);
 
-  if (messages.length === 0) {
+  if (!chat && messages.length < 1) {
     return null;
   }
 
   return (
     <section className="flex flex-col space-y-4 min-h-screen w-full overflow-x-hidden py-14">
       {messages.map((m: Message) => (
-        <div key={m.id} className="w-full container flex justify-center">
+        <div
+          key={m.id ?? generateId()}
+          className="w-full container flex justify-center"
+        >
           <MessageComponent
             role={m.role}
             content={m.content}

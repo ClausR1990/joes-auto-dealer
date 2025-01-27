@@ -7,27 +7,42 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { db } from "@/prisma/client";
 import { useChatStore } from "@/store";
+import { useSearchParams } from "next/navigation";
 
 interface FloatingResetProps {
   className?: string;
 }
 
+const resetMessagesInDatabase = async (chatId: string) => {
+  await db.chat.update({
+    where: {
+      id: chatId,
+    },
+    data: {
+      messages: [],
+    },
+  });
+};
+
 export function FloatingReset({ className }: FloatingResetProps) {
+  const searchParams = useSearchParams();
   const setCarImage = useChatStore((state) => state.setCarImage);
   const { reload, setMessages, append, isLoading } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
   const [isHovered, setIsHovered] = React.useState(false);
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    await resetMessagesInDatabase(searchParams.get("chatId") as string);
     setMessages([]);
     reload();
+    setCarImage(null);
     append({
       role: "user",
       content: "Find me my dream car.",
     });
-    setCarImage(null);
   };
 
   return (

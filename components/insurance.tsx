@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InsuranceCalculatorProps } from "@/data/schemas";
 import { useChat } from "ai/react";
+import { useSearchParams } from "next/navigation";
 import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
 export default function InsuranceCalculator({
@@ -40,6 +41,7 @@ export default function InsuranceCalculator({
     },
   ],
 }: InsuranceCalculatorProps) {
+  const searchParams = useSearchParams();
   const [deductible, setDeductible] = useState(500);
   const [selectedAdditionals, setSelectedAdditionals] = useState<Set<string>>(
     new Set([additionals[0]?.name, additionals[1]?.name].filter(Boolean))
@@ -49,7 +51,7 @@ export default function InsuranceCalculator({
   const [isApproved, setIsApproved] = useState(false);
 
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const calculateMonthlyPremium = () => {

@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useChat } from "ai/react";
+import { useSearchParams } from "next/navigation";
 import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
 interface PaymentFormProps {
@@ -37,10 +38,11 @@ export function PaymentForm({
   onSuccess,
   product,
 }: PaymentFormProps) {
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
   const [paymentComplete, setPaymentComplete] = React.useState(false);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handlePayment = async () => {

@@ -7,12 +7,13 @@ import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import { Bot, Search } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Browser } from "./magic-ui/browser";
 
 const tabs = [
   {
     id: "home",
-    title: "Joes Auto Dealer",
+    title: "Joe's Auto Dealer",
     url: "joes-auto-dealer.vercel.app",
     content: {
       title: "Welcome to Joe's Auto Dealer",
@@ -59,19 +60,28 @@ const tabs = [
   },
 ];
 
-export default function AutoDealerHero() {
+type AutoDealerHeroProps = {
+  chatId: string;
+};
+
+export default function AutoDealerHero({ chatId }: AutoDealerHeroProps) {
+  const router = useRouter();
   const setImage = useChatStore((state) => state.setCarImage);
   const { append, setMessages } = useChat({
-    id: "auto-dealer",
+    id: chatId,
   });
 
-  const handleClick = () => {
-    setMessages([]);
-    append({
-      role: "user",
-      content: "Find me my dream car.",
-    });
-    setImage(null);
+  const handleClick = async () => {
+    if (chatId) {
+      router.push(`/?chatId=${chatId}`);
+
+      setMessages([]);
+      append({
+        role: "user",
+        content: "Find me my dream car.",
+      });
+      setImage(null);
+    }
   };
 
   return (

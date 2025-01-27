@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { financeCalculatorSchema } from "@/data/schemas";
 import { useChat } from "ai/react";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
@@ -21,13 +22,14 @@ export default function FinanceCalculator({
   carModel = "Model 3",
   interestRate = 4.9,
 }: FinanceCalculatorProps) {
+  const searchParams = useSearchParams();
   const [downPayment, setDownPayment] = useState(carPrice * 0.2);
   const [loanTerm, setLoanTerm] = useState(60);
   const [hasSelected, setHasSelected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const calculateMonthlyPayment = () => {

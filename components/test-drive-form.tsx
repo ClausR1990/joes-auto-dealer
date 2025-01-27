@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
+import { useSearchParams } from "next/navigation";
 
 const timeSlotsSAMPLE = [
   "09:00 AM",
@@ -55,12 +56,13 @@ export function TestDriveForm({
   timeSlots = timeSlotsSAMPLE,
   onSuccess,
 }: TestDriveFormProps) {
+  const searchParams = useSearchParams();
   const [date, setDate] = React.useState<Date>();
   const [time, setTime] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [hasScheduled, setHasScheduled] = React.useState(false);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handleSchedule = async () => {

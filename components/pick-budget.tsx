@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { useChat } from "ai/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 
 type Budget = {
@@ -46,11 +47,12 @@ const getMidRangeBudget = (budgets?: Budget[]) => {
 };
 
 export default function PickBudget({ budgets }: BudgetRangeProps) {
+  const searchParams = useSearchParams();
   const [budget, setBudget] = React.useState(50000);
   const [hasSelected, setHasSelected] = React.useState(false);
   const [selectedRange, setSelectedRange] = React.useState(budgets?.[1]);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handleSliderChange = (value: number[]) => {

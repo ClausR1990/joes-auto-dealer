@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Footer } from "./footer";
 import { AnimatedCar } from "./magic-ui/animated-car";
 
@@ -89,8 +90,9 @@ export const LandingSection = ({
 };
 
 export function LandingContent() {
+  const searchParams = useSearchParams();
   const { messages } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   if (messages.length > 0) {

@@ -1,6 +1,10 @@
 "use client";
 
-import { generateCarImage } from "@/app/actions";
+import {
+  generateCarImage,
+  getCarImageFromDatabase,
+  updateCarImage,
+} from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +27,7 @@ import {
   Percent,
 } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatedCarLoader } from "./magic-ui/animated-car-loader";
 
@@ -49,11 +54,12 @@ const CarProduct = ({
   fuelType,
   salesPitch,
 }: CarProductProps) => {
+  const searchParams = useSearchParams();
   const [hasSelected, setHasSelected] = useState(false);
   const carImage = useChatStore((state) => state.carImage);
   const setCarImage = useChatStore((state) => state.setCarImage);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handlePayNow = () => {
@@ -85,6 +91,13 @@ const CarProduct = ({
       return;
     }
     const fetchImage = async () => {
+      const carImage = await getCarImageFromDatabase(
+        searchParams.get("chatId") as string
+      );
+      if (carImage) {
+        setCarImage(JSON.parse(JSON.stringify(carImage)));
+        return;
+      }
       const image = await generateCarImage({
         carMake: brandName,
         carType: vehicleType,
@@ -93,11 +106,21 @@ const CarProduct = ({
         carYear: modelYear,
       });
 
+      await updateCarImage(searchParams.get("chatId") as string, image);
+
       setCarImage(image);
     };
 
     fetchImage();
-  }, [brandName, color, modelName, modelYear, vehicleType, setCarImage]);
+  }, [
+    brandName,
+    color,
+    modelName,
+    modelYear,
+    vehicleType,
+    setCarImage,
+    searchParams,
+  ]);
 
   return (
     <motion.div
