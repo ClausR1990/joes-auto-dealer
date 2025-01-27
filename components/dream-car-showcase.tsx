@@ -10,6 +10,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DreamCarShowcaseProps } from "@/data/schemas";
 import { useChatStore } from "@/store";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
@@ -18,22 +19,24 @@ import {
   ChevronRight,
   DollarSignIcon,
   Fuel,
-  Loader2,
   Paintbrush,
   Percent,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { AnimatedCarLoader } from "./magic-ui/animated-car-loader";
 
-export type CarProductProps = {
-  brandName?: string;
-  modelName?: string;
+export type CarProductProps = Partial<DreamCarShowcaseProps> & {
   vehicleType?: string;
-  price?: string;
-  modelYear?: string;
-  color?: string;
   fuelType?: string;
-  salesPitch?: string;
+};
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(price);
 };
 
 const CarProduct = ({
@@ -104,7 +107,7 @@ const CarProduct = ({
       className="w-full max-w-4xl mx-auto"
     >
       <Card className="bg-white rounded-lg overflow-hidden shadow-lg skeleton-bg">
-        <CardHeader className="p-6 space-y-4">
+        <CardHeader className="space-y-4">
           <div className="flex justify-between items-start">
             <div>
               <motion.h2
@@ -124,19 +127,29 @@ const CarProduct = ({
                 {modelName}
               </motion.h3>
             </div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-3xl font-bold text-gray-900"
-            >
-              {price}
-            </motion.div>
+            <div className="text-right">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-2xl font-bold text-gray-900"
+              >
+                {formatPrice(price?.basePrice ?? 0)}
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-sm text-gray-600"
+              >
+                delivery fee: {formatPrice(price?.deliveryFee ?? 0)}
+              </motion.div>
+            </div>
           </div>
         </CardHeader>
 
-        <CardContent className="p-6">
-          <div className="flex flex-wrap gap-8">
+        <CardContent>
+          <div className="flex flex-wrap gap-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -154,9 +167,13 @@ const CarProduct = ({
                   blurDataURL={carImage?.base64}
                 />
               ) : (
-                <Skeleton className="size-full flex items-center justify-center">
-                  <Loader2 className="size-8 animate-spin" />
-                </Skeleton>
+                <>
+                  {brandName ? (
+                    <Skeleton className="size-full flex items-center justify-center">
+                      <AnimatedCarLoader className="text-muted-foreground h-32" />
+                    </Skeleton>
+                  ) : null}
+                </>
               )}
             </motion.div>
 
@@ -194,6 +211,19 @@ const CarProduct = ({
                 {salesPitch}
               </motion.p>
             </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="flex justify-between w-full gap-4 items-end"
+            >
+              <div className="ext-xl text-gray-600">Total:</div>
+              <div className="text-3xl font-bold text-gray-900">
+                {formatPrice(
+                  (price?.basePrice ?? 0) + (price?.deliveryFee ?? 0)
+                )}
+              </div>
+            </motion.div>
           </div>
         </CardContent>
 
@@ -203,7 +233,7 @@ const CarProduct = ({
               variant="outline"
               className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handleScheduleTestDrive}
-              disabled={hasSelected}
+              disabled={hasSelected || !carImage}
             >
               Schedule Test Drive
               <ChevronRight className="w-4 h-4" />
@@ -212,7 +242,7 @@ const CarProduct = ({
               variant="outline"
               className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handleFinance}
-              disabled={hasSelected}
+              disabled={hasSelected || !carImage}
             >
               I want to finance
               <Percent className="w-4 h-4" />
@@ -220,7 +250,7 @@ const CarProduct = ({
             <Button
               className="flex items-center gap-2 skeleton-div flex-1"
               onClick={handlePayNow}
-              disabled={hasSelected}
+              disabled={hasSelected || !carImage}
             >
               Pay Now
               <DollarSignIcon className="w-4 h-4" />

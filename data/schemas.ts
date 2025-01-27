@@ -56,7 +56,8 @@ Remember:
 - Stay concise in responses between tool calls
 - Always show order confirmation as the final step
 - Show order confirmation only after all payments are complete
-- The showOrderConfirmation() tool must be the last tool called`;
+- The showOrderConfirmation() tool must be the last tool called
+Todays date is ${new Date().toLocaleDateString()}`;
 
 export const orderConfirmationSchema = z.object({
   product: z.object({
@@ -68,6 +69,14 @@ export const orderConfirmationSchema = z.object({
   deliveryDate: z
     .string()
     .describe("The estimated delivery date of the car as ISO string"),
+  insuranceProvider: z
+    .string()
+    .describe("A funny fake name for the insurance provider"),
+  insurancePrice: z.number().describe("The monthly insurance cost in dollars"),
+  financingProvider: z
+    .string()
+    .optional()
+    .describe("A funny fake name for the financing provider"),
 });
 
 export const financeCalculatorSchema = z.object({
@@ -117,3 +126,23 @@ export type Additional = z.infer<typeof additionalSchema>;
 export type InsuranceCalculatorProps = Partial<
   z.infer<typeof insuranceCalculatorSchema>
 >;
+
+export const dreamCarShowcaseSchema = z.object({
+  brandName: z.string().describe("brand name of the car"),
+  modelName: z.string().describe("model name of the car"),
+  price: z.object({
+    basePrice: z
+      .number()
+      .describe("A realistic price of the car based on the user's budget"),
+    deliveryFee: z.number().describe("delivery fee of the car"),
+  }),
+  modelYear: z.string().describe("model year of the car"),
+  color: z.string().describe("color of the car"),
+  salesPitch: z
+    .string()
+    .describe(
+      "A sassy, southern-style sales pitch full of charm and humor. Use southern expressions and slang. Make light of the car's condition with playful euphemisms."
+    ),
+});
+
+export type DreamCarShowcaseProps = z.infer<typeof dreamCarShowcaseSchema>;

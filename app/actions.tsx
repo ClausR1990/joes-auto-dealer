@@ -1,5 +1,6 @@
 "use server";
 
+import { dreamCarShowcaseSchema } from "@/data/schemas";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import OpenAI from "openai";
@@ -219,28 +220,16 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
   try {
     const { object } = await generateObject({
       model: openai("gpt-4o"),
-      schema: z.object({
-        brandName: z.string().describe("brand name of the car"),
-        modelName: z.string().describe("model name of the car"),
-        price: z
-          .string()
-          .describe("A realistic price of the car based on the user's budget"),
-        modelYear: z.string().describe("model year of the car"),
-        color: z.string().describe("color of the car"),
-        salesPitch: z
-          .string()
-          .describe(
-            "A sassy, southern-style sales pitch full of charm and humor. Use southern expressions and slang. Make light of the car's condition with playful euphemisms."
-          ),
-      }),
+      temperature: 0.5,
+      schema: dreamCarShowcaseSchema,
       prompt: `As a southern car dealer, suggest a car matching:
-Vehicle: ${props.vehicleType}
-Brands: ${props.brandNames.join(", ")}
-Budget: ${props.budget}
-Color: ${props.color}
-Fuel: ${props.fuelType}
+      Vehicle: ${props.vehicleType}
+      Brands: ${props.brandNames.join(", ")}
+      Budget: ${props.budget}
+      Color: ${props.color}
+      Fuel: ${props.fuelType}
 
-Keep the sales pitch short, sassy, and southern-styled.`,
+      Keep the sales pitch short, sassy, and southern-styled.`,
     });
 
     return { ...props, ...object };

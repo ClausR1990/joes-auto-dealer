@@ -73,9 +73,20 @@ export function OrderConfirmation(props: CarReceiptProps) {
                   {new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
+                    maximumFractionDigits: 0,
                   }).format(product?.carPrice ?? 0)}
                 </div>
               </div>
+              {props?.insuranceProvider && (
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    Insured by:
+                  </div>
+                  <div className="font-semibold">
+                    {props?.insuranceProvider}
+                  </div>
+                </div>
+              )}
             </div>
             {deliveryDate && orderDate && (
               <div className="space-y-3">
@@ -95,6 +106,16 @@ export function OrderConfirmation(props: CarReceiptProps) {
                     {format(new Date(deliveryDate ?? ""), "PPPP")}
                   </div>
                 </div>
+                {props?.financingProvider && (
+                  <div>
+                    <div className="text-sm text-muted-foreground">
+                      Financed by:
+                    </div>
+                    <div className="font-semibold">
+                      {props?.financingProvider}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
