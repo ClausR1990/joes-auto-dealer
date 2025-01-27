@@ -65,30 +65,31 @@ export const generateCarImage = async ({
   carModel,
   carYear,
 }: CarImagePrompt) => {
+  console.log("Generating car image with OpenAI API");
   const car = await openaiInstance.images.generate({
     model: "dall-e-3",
     prompt: `Create a professional, high-quality automotive photograph of a ${carColor} ${carMake} ${carType} at a car dealership.
 
-Main subject:
-- Vehicle: ${carMake} ${carModel} ${carType} from ${carYear} in ${carColor} metallic paint
-- Angle: 3/4 front view, slightly elevated
-- Setting: Clean, well-lit dealership showroom or outdoor lot
+    Main subject:
+    - Vehicle: ${carMake} ${carModel} ${carType} from ${carYear} in ${carColor} metallic paint
+    - Angle: 3/4 front view, slightly elevated
+    - Setting: Clean, well-lit dealership showroom or outdoor lot
 
-Key details:
-- Natural lighting with subtle reflections on the metallic paint
-- Sharp focus on the vehicle with slight background blur
-- Professional car photography style with attention to highlights and shadows
-- Clean, uncluttered background typical of dealership environments
-- Visible dealership elements like price tags or promotional materials
-- Pristine condition showcasing the vehicle's design features
+    Key details:
+    - Natural lighting with subtle reflections on the metallic paint
+    - Sharp focus on the vehicle with slight background blur
+    - Professional car photography style with attention to highlights and shadows
+    - Clean, uncluttered background typical of dealership environments
+    - Visible dealership elements like price tags or promotional materials
+    - Pristine condition showcasing the vehicle's design features
 
-Technical specifications:
-- Photorealistic style
-- High contrast and sharp details
-- Professional automotive photography lighting
-- High dynamic range to capture metallic paint effects
+    Technical specifications:
+    - Photorealistic style
+    - High contrast and sharp details
+    - Professional automotive photography lighting
+    - High dynamic range to capture metallic paint effects
 
-Do not include: people, text overlays, watermarks, or unrealistic modifications.`,
+    Do not include: people, text overlays, watermarks, or unrealistic modifications.`,
     n: 1,
     quality: "standard",
     size: "1024x1024",
@@ -105,6 +106,8 @@ Do not include: people, text overlays, watermarks, or unrealistic modifications.
     Buffer.from(await res.arrayBuffer())
   );
   const { base64 } = await getPlaiceholder(buffer);
+
+  console.log("Car image generated successfully", fileUrl);
 
   return {
     base64,
