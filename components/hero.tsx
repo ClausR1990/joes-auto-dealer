@@ -34,9 +34,9 @@ const tabs = [
     },
   },
   {
-    id: "knowdk",
+    id: "knowitdk",
     title: "Knowit | Denmark",
-    url: "know.dk",
+    url: "knowit.dk",
     content: {
       title: "Let's reshape it",
       description:
