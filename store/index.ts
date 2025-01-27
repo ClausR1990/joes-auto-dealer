@@ -1,10 +1,14 @@
-import { Message } from "ai";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+type ToolsCalled = {
+  name: string;
+  hasSelected: boolean;
+};
+
 export type ChatStore = {
-  messages: Message[];
-  setMessages: (message: Message) => void;
+  tools: ToolsCalled[] | null;
+  setTools: (tools: ToolsCalled[] | null) => void;
   carImage: {
     base64: string;
     url: string;
@@ -15,19 +19,18 @@ export type ChatStore = {
 export const useChatStore = create<ChatStore, [["zustand/persist", ChatStore]]>(
   persist(
     (set) => ({
-      messages: [],
-      setMessages: (message) =>
-        set((state) => ({ messages: [...state.messages, message] })),
+      tools: null,
       carImage: null,
       setCarImage: (image) => set({ carImage: image }),
+      setTools: (tools) => set({ tools }),
     }),
     {
       name: "chat-store",
       partialize: (state) => ({
-        messages: state.messages,
-        setMessages: state.setMessages,
+        tools: state.tools,
         carImage: null, // Default value instead of actual state
         setCarImage: state.setCarImage,
+        setTools: state.setTools,
       }),
     }
   )

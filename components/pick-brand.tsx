@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChat } from "ai/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Car, Check, CircleDashed } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 
 type Brand = {
@@ -26,11 +27,12 @@ type PickBrandProps = {
 };
 
 export default function PickBrand({ carBrands }: PickBrandProps) {
+  const searchParams = useSearchParams();
   const [selectedBrands, setSelectedBrands] = React.useState<string[]>([]);
   const [noPreference, setNoPreference] = React.useState(false);
   const [hasSelected, setHasSelected] = React.useState(false);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
   const handleBrandToggle = (brandId: string) => {
     if (noPreference) {

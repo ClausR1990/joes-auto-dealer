@@ -12,6 +12,7 @@ import { vehicleTypes } from "@/data";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const container = {
@@ -30,10 +31,11 @@ const item = {
 };
 
 export const PickVehicleType = () => {
+  const searchParams = useSearchParams();
   const [hasPicked, setHasPicked] = useState(false);
   const [hoveredType, setHoveredType] = useState<string | null>(null);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handleClick = (type: string) => {

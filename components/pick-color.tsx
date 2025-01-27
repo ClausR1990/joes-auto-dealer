@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 
 export const colors = [
@@ -119,11 +120,12 @@ export const colors = [
 ];
 
 export default function PickColor() {
+  const searchParams = useSearchParams();
   const [selectedColor, setSelectedColor] = React.useState(colors[0].value);
   const [hasSelected, setHasSelected] = React.useState(false);
   const selectedColorData = colors.find((c) => c.value === selectedColor);
   const { append } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   const handleClick = () => {

@@ -10,15 +10,42 @@ import {
   orderConfirmationSchema,
   SYSTEM_PROMPT,
 } from "@/data/schemas";
+import { db } from "@/prisma/client";
 import { openai } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText, tool } from "ai";
+import {
+  appendResponseMessages,
+  convertToCoreMessages,
+  Message,
+  streamText,
+  tool,
+} from "ai";
 import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+const saveChat = async (messages: Message[], id: string) => {
+  console.log("Saving chat", messages);
+  try {
+    await db.chat.update({
+      where: {
+        id,
+      },
+      data: {
+        messages: JSON.parse(JSON.stringify(messages)),
+      },
+    });
+  } catch (error) {
+    console.error("Error saving chat", error);
+  }
+};
+
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const body = await req.json();
+  console.log(body);
+  const { messages, id } = await req.json();
+
+  console.log("id", id, messages);
 
   const coreMessages = convertToCoreMessages(messages);
 
@@ -28,6 +55,15 @@ export async function POST(req: Request) {
     messages: coreMessages,
     toolChoice: "auto",
     maxSteps: 1,
+    onFinish: async ({ response }) => {
+      await saveChat(
+        appendResponseMessages({
+          messages,
+          responseMessages: response.messages,
+        }),
+        id
+      );
+    },
     tools: {
       pickVehicleType: tool({
         description: "Get the vehicle type",

@@ -1,11 +1,36 @@
 "use server";
 
 import { dreamCarShowcaseSchema } from "@/data/schemas";
+import { db } from "@/prisma/client";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import OpenAI from "openai";
 import { getPlaiceholder } from "plaiceholder";
 import { z } from "zod";
+
+export const getCarImageFromDatabase = async (chatId: string) => {
+  const chat = await db.chat.findUnique({
+    where: {
+      id: chatId,
+    },
+  });
+
+  return chat?.carImage;
+};
+
+export const updateCarImage = async (
+  chatId: string,
+  image: Awaited<ReturnType<typeof generateCarImage>>
+) => {
+  await db.chat.update({
+    where: {
+      id: chatId,
+    },
+    data: {
+      carImage: image,
+    },
+  });
+};
 
 const openaiInstance = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

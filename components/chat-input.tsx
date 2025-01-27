@@ -2,12 +2,14 @@
 
 import { useChat } from "ai/react";
 import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export const ChatInput = () => {
+  const searchParams = useSearchParams();
   const { handleSubmit, input, isLoading, handleInputChange } = useChat({
-    id: "auto-dealer",
+    id: searchParams.get("chatId") as string,
   });
 
   return (
