@@ -1,7 +1,5 @@
-"use client";
-
 import { motion } from "framer-motion";
-import { Calculator, Shield } from "lucide-react";
+import { Calculator, Loader2, Shield } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InsuranceCalculatorProps } from "@/data/schemas";
 import { useChat } from "ai/react";
+import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
 export default function InsuranceCalculator({
   carValue = 35000,
@@ -46,6 +45,8 @@ export default function InsuranceCalculator({
     new Set([additionals[0]?.name, additionals[1]?.name].filter(Boolean))
   );
   const [hasSelected, setHasSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
 
   const { append } = useChat({
     id: "auto-dealer",
@@ -54,20 +55,16 @@ export default function InsuranceCalculator({
   const calculateMonthlyPremium = () => {
     let premium = baseRate;
 
-    // Adjust for car value (higher value = higher premium)
     premium *= 1 + carValue / 100000;
-
-    // Adjust for deductible (higher deductible = lower premium)
     premium *= 1 - (deductible - 500) / 5000;
 
-    // Add costs for additional coverages
     additionals.forEach((additional) => {
       if (selectedAdditionals.has(additional.name)) {
         premium += additional.price;
       }
     });
 
-    return Math.max(premium, 50); // Minimum premium of $50
+    return Math.max(premium, 50);
   };
 
   const monthlyPremium = Math.round(calculateMonthlyPremium());
@@ -98,7 +95,16 @@ export default function InsuranceCalculator({
     });
   };
 
-  const handlePurchaseInsurance = () => {
+  const handlePurchaseInsurance = async () => {
+    setIsLoading(true);
+
+    // Simulate insurance verification API call
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setIsLoading(false);
+    setIsApproved(true);
+    setHasSelected(true);
+
     const selectedCoverages = additionals
       .filter((additional) => selectedAdditionals.has(additional.name))
       .map((additional) => additional.name)
@@ -112,7 +118,26 @@ export default function InsuranceCalculator({
         deductible
       )} deductible. Coverage includes: ${selectedCoverages}. Please proceed to purchase. Show the payment form to the user.`,
     });
-    setHasSelected(true);
+  };
+
+  const getButtonContent = () => {
+    if (isLoading) {
+      return (
+        <>
+          <Loader2 className="size-4 animate-spin" />
+          Verifying Coverage
+        </>
+      );
+    }
+    if (isApproved) {
+      return (
+        <>
+          <AnimatedCheckMark />
+          Quote Approved
+        </>
+      );
+    }
+    return "Purchase Insurance";
   };
 
   return (
@@ -247,9 +272,9 @@ export default function InsuranceCalculator({
               <Button
                 className="w-full"
                 onClick={handlePurchaseInsurance}
-                disabled={hasSelected}
+                disabled={hasSelected || isLoading}
               >
-                Purchase Insurance
+                {getButtonContent()}
               </Button>
             </TabsContent>
           </Tabs>

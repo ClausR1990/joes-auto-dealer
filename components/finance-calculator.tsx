@@ -1,7 +1,5 @@
-"use client";
-
 import { motion } from "framer-motion";
-import { Calculator, Car, DollarSign } from "lucide-react";
+import { Calculator, Car, DollarSign, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { financeCalculatorSchema } from "@/data/schemas";
 import { useChat } from "ai/react";
 import { z } from "zod";
+import { AnimatedCheckMark } from "./magic-ui/animated-checkmark";
 
 type FinanceCalculatorProps = Partial<z.infer<typeof financeCalculatorSchema>>;
 
@@ -22,19 +21,20 @@ export default function FinanceCalculator({
   carModel = "Model 3",
   interestRate = 4.9,
 }: FinanceCalculatorProps) {
-  const [downPayment, setDownPayment] = useState(carPrice * 0.2); // 20% default down payment
-  const [loanTerm, setLoanTerm] = useState(60); // 60 months default
+  const [downPayment, setDownPayment] = useState(carPrice * 0.2);
+  const [loanTerm, setLoanTerm] = useState(60);
   const [hasSelected, setHasSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
   const { append } = useChat({
     id: "auto-dealer",
   });
 
   const calculateMonthlyPayment = () => {
-    const principal = Math.max(0, carPrice - downPayment); // Prevent negative principal
+    const principal = Math.max(0, carPrice - downPayment);
     const monthlyRate = interestRate / 100 / 12;
 
     if (monthlyRate === 0) {
-      // Special case: zero interest rate
       return principal / loanTerm;
     }
 
@@ -43,7 +43,7 @@ export default function FinanceCalculator({
       (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
       (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
-    return isNaN(monthlyPayment) ? 0 : Math.round(monthlyPayment * 100) / 100; // Round to two decimals
+    return isNaN(monthlyPayment) ? 0 : Math.round(monthlyPayment * 100) / 100;
   };
 
   const roundToTwo = (value: number) => Math.round(value * 100) / 100;
@@ -58,18 +58,46 @@ export default function FinanceCalculator({
   });
 
   const handleLoanTermChange = (value: number) => {
-    const validValue = Math.round(value / 6) * 6; // Round to nearest multiple of 6
+    const validValue = Math.round(value / 6) * 6;
     setLoanTerm(validValue);
   };
 
-  const handleApplyForFinancing = () => {
+  const handleApplyForFinancing = async () => {
+    setIsLoading(true);
+
+    // Simulate bank API call
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setIsLoading(false);
+    setIsApproved(true);
+    setHasSelected(true);
+
     append({
       role: "system",
       content: `The financing application was approved! You can expect to pay ${formatter.format(
         monthlyPayment
       )} per month for ${loanTerm} months. The down payment is: ${downPayment}. Present the payment form to the user for the down payment.`,
     });
-    setHasSelected(true);
+  };
+
+  const getButtonContent = () => {
+    if (isLoading) {
+      return (
+        <>
+          <Loader2 className="size-4 animate-spin" />
+          Contacting Bank
+        </>
+      );
+    }
+    if (isApproved) {
+      return (
+        <>
+          <AnimatedCheckMark />
+          Loan Approved
+        </>
+      );
+    }
+    return "Apply for Financing";
   };
 
   return (
@@ -219,9 +247,9 @@ export default function FinanceCalculator({
               <Button
                 className="w-full"
                 onClick={handleApplyForFinancing}
-                disabled={hasSelected}
+                disabled={hasSelected || isLoading}
               >
-                Apply for Financing
+                {getButtonContent()}
               </Button>
             </TabsContent>
           </Tabs>

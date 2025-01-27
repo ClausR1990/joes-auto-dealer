@@ -229,7 +229,12 @@ export const generateDreamCar = async (props: DreamCarPayload) => {
       Color: ${props.color}
       Fuel: ${props.fuelType}
 
-      Keep the sales pitch short, sassy, and southern-styled.`,
+      Keep the sales pitch short, sassy, and southern-styled.
+      Todays date is: ${new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}`,
     });
 
     return { ...props, ...object };
