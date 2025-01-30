@@ -27,6 +27,7 @@ const formatCurrency = (amount: number) => {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 2,
+    trailingZeroDisplay: "stripIfInteger",
   });
 
   return USD.format(amount);

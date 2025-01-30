@@ -103,7 +103,7 @@ export function LandingContent() {
         key="ai-matching"
         title="AI-Powered Car Matching"
         description="Our sophisticated AI technology analyzes your preferences, driving habits, and lifestyle to recommend the perfect vehicles for you. Experience personalized car shopping that understands your needs and budget constraints."
-        image="/ai-salesmen.webp"
+        image="/section-1.webp"
         imagePosition="right"
       />
 
@@ -111,7 +111,7 @@ export function LandingContent() {
         key="virtual-assistant"
         title="24/7 Virtual Assistant"
         description="Get instant answers to your questions anytime, anywhere. Our AI assistant helps you explore vehicles, compare options, and schedule test drives - all at your convenience. Experience round-the-clock support tailored to your car-buying journey."
-        image="/virtual-assistant.webp"
+        image="/section-2.webp"
         imagePosition="left"
       />
 
@@ -119,7 +119,7 @@ export function LandingContent() {
         key="seamless-buying"
         title="Seamless Buying Experience"
         description="From initial search to final purchase, enjoy a streamlined process that puts you in control. Compare prices, explore financing options, and even complete your purchase online. Experience the future of car buying with our innovative platform."
-        image="/seamless-buying-experience.webp"
+        image="/section-3.webp"
         imagePosition="right"
       />
 

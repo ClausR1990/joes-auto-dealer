@@ -7,7 +7,9 @@ import { useChat } from "ai/react";
 import { motion } from "framer-motion";
 import { Bot, Search } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Browser } from "./magic-ui/browser";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const tabs = [
   {
@@ -127,8 +129,14 @@ export default function AutoDealerHero() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-row items-center gap-2"
             >
+              <Link href="/about-joe">
+                <Avatar className="size-14">
+                  <AvatarImage src="/ai_avatar.webp" alt="" />
+                  <AvatarFallback>JAD</AvatarFallback>
+                </Avatar>
+              </Link>
               <Button
                 className={cn("rounded-full text-lg gap-2")}
                 onClick={handleClick}
@@ -142,7 +150,7 @@ export default function AutoDealerHero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex items-center gap-8 pt-4"
+              className="flex items-center gap-8"
             >
               <div className="flex flex-col">
                 <span className="text-2xl font-bold">500+</span>
@@ -181,7 +189,7 @@ export default function AutoDealerHero() {
           </motion.div>
         </div>
       </div>
-      <div className="absolute inset-0 pointer-events-none size-full">
+      <div className="absolute inset-0 pointer-events-none size-full hidden sm:block">
         <motion.svg
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
