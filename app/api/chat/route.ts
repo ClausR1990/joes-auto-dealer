@@ -11,7 +11,7 @@ import {
   SYSTEM_PROMPT,
 } from "@/data/schemas";
 import { openai } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText, tool } from "ai";
+import { convertToCoreMessages, smoothStream, streamText, tool } from "ai";
 import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
     model: openai("gpt-4o"),
     system: SYSTEM_PROMPT,
     messages: coreMessages,
+    experimental_transform: smoothStream(),
     toolChoice: "auto",
     maxSteps: 1,
     tools: {
